@@ -1,0 +1,2200 @@
+<!DOCTYPE html>
+<html lang="pl"><head>
+<meta http-equiv="content-type" content="text/html; charset=UTF-8">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1, user-scalable=no">
+<title>Kult Przedwiecznych</title>
+<link rel="preconnect" href="https://fonts.googleapis.com/">
+<link href="KultPrzedwiecznych07_files/css2_6yKi.css" rel="stylesheet">
+<style>
+:root{
+  --bg-deep:#060b09;
+  --bg-mid:#0d1a15;
+  --parchment:#e7dbb9;
+  --parchment-dark:#d5c495;
+  --parchment-edge:#3a3020;
+  --ink:#2a2013;
+  --ink-soft:#54452c;
+  --gold:#c7a55a;
+  --violet:#9070b8;
+  --red:#c24a4a;
+  --teal:#4fb39f;
+  --glow:#5fcfa0;
+  --glow-dim:rgba(95,207,160,0.18);
+}
+*{box-sizing:border-box;}
+html,body{
+  margin:0;height:100%;
+  background:radial-gradient(ellipse at 50% -10%, var(--bg-mid) 0%, var(--bg-deep) 55%, #020403 100%);
+  font-family:'EB Garamond', serif;
+  color:var(--parchment);
+  overflow:hidden;
+}
+body::before{
+  content:"";
+  position:fixed;inset:0;
+  background-image:
+    radial-gradient(circle at 20% 30%, rgba(95,207,160,0.05) 0, transparent 40%),
+    radial-gradient(circle at 80% 75%, rgba(155,58,58,0.05) 0, transparent 40%);
+  pointer-events:none;
+  z-index:0;
+}
+#app{
+  position:relative;
+  width:100%;height:100%;
+  display:flex;align-items:center;justify-content:center;
+  z-index:1;
+}
+.screen{
+  display:none;
+  width:100%;height:100%;
+  align-items:center;justify-content:center;
+  flex-direction:column;
+}
+.screen.active{display:flex;}
+
+/* ---------- START SCREEN ---------- */
+#screen-start{padding:40px 24px;text-align:center;overflow-y:auto;}
+.eye-glyph{
+  width:64px;height:64px;margin-bottom:18px;opacity:0.85;
+  filter:drop-shadow(0 0 14px var(--glow-dim));
+}
+.title-main{
+  font-family:'Cinzel', serif;
+  font-weight:900;
+  font-size:clamp(28px,5vw,54px);
+  letter-spacing:0.08em;
+  color:var(--parchment);
+  margin:0 0 4px;
+  text-shadow:0 0 24px rgba(95,207,160,0.25);
+}
+.title-sub{
+  font-family:'Cinzel', serif;
+  font-size:clamp(11px,2vw,13px);
+  letter-spacing:0.35em;
+  color:var(--teal);
+  text-transform:uppercase;
+  margin-bottom:28px;
+}
+.intro-text{
+  max-width:clamp(380px,54vw,640px);
+  font-size:clamp(15px,1.3vw,18px);
+  line-height:1.6;
+  color:var(--parchment-dark);
+  font-style:italic;
+  margin-bottom:32px;
+}
+.btn-main{
+  font-family:'Cinzel', serif;
+  font-size:14px;
+  letter-spacing:0.12em;
+  text-transform:uppercase;
+  background:linear-gradient(180deg, #14261f, #0a1712);
+  color:var(--glow);
+  border:1px solid var(--teal);
+  padding:16px 38px;
+  border-radius:2px;
+  cursor:pointer;
+  transition:all .25s ease;
+}
+.btn-main:hover{
+  box-shadow:0 0 22px rgba(95,207,160,0.35);
+  border-color:var(--glow);
+  transform:translateY(-1px);
+}
+.origin-grid{
+  width:min(920px, 94vw);
+  display:grid;grid-template-columns:repeat(4,1fr);gap:8px;
+  margin:0 0 18px;
+}
+.origin-card{
+  border:1px solid rgba(255,255,255,0.08);
+  background:rgba(0,0,0,0.18);
+  color:var(--parchment-dark);
+  border-radius:5px;padding:9px 8px;
+  cursor:pointer;text-align:left;
+  transition:border-color .2s, box-shadow .2s, transform .2s;
+}
+.origin-card:hover{border-color:rgba(95,207,160,0.45);transform:translateY(-1px);}
+.origin-card.selected{border-color:var(--glow);box-shadow:0 0 14px rgba(95,207,160,0.22);}
+.origin-head{display:flex;align-items:center;gap:7px;font-family:'Cinzel', serif;font-size:12px;color:var(--parchment);}
+.origin-icon{font-size:18px;line-height:1;}
+.origin-stats{font-family:'Space Mono', monospace;font-size:9.5px;color:var(--ink-soft);margin-top:5px;line-height:1.35;}
+.origin-desc{font-size:10.5px;line-height:1.35;color:var(--parchment-dark);margin-top:5px;min-height:42px;}
+.origin-item{font-size:11px;color:var(--gold);margin-top:5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.story-modal{
+  position:fixed;inset:0;z-index:80;
+  display:none;align-items:center;justify-content:center;
+  background:rgba(2,4,3,0.78);padding:22px;
+}
+.story-modal.show{display:flex;}
+.story-box{
+  width:min(520px, 100%);max-height:86vh;overflow:auto;
+  background:linear-gradient(160deg,var(--parchment),var(--parchment-dark));
+  color:var(--ink);border:1px solid var(--parchment-edge);border-radius:6px;
+  box-shadow:0 22px 70px rgba(0,0,0,0.75);
+  padding:24px 24px 20px;text-align:left;
+}
+.story-title{font-family:'Cinzel', serif;font-weight:900;font-size:20px;letter-spacing:0.05em;margin-bottom:12px;}
+.story-text{font-size:17px;line-height:1.55;white-space:pre-line;font-style:italic;margin-bottom:20px;}
+.story-box .btn-main{display:block;margin-left:auto;color:var(--glow);}
+.effect-known{display:block;margin-top:4px;font-family:'Space Mono', monospace;font-size:10px;color:var(--gold);}
+@media (max-width:720px){.origin-grid{grid-template-columns:repeat(2,1fr);}.origin-head{font-size:11px;}.origin-desc{min-height:0;}}
+.legend{
+  margin-top:30px;font-size:clamp(12px,0.85vw,14px);color:var(--ink-soft);
+  letter-spacing:0.05em;max-width:clamp(340px,50vw,580px);line-height:1.7;
+}
+.legend b{color:var(--parchment-dark);}
+
+/* ---------- GAME SCREEN ---------- */
+#screen-game{
+  width:100%;height:100%;
+  max-width:clamp(360px, 94vw, 640px);margin:0 auto;
+  display:flex;flex-direction:column;
+  padding:clamp(10px,1.8vh,18px) clamp(12px,2.5vw,22px) clamp(12px,2.2vh,20px);
+  overflow-y:auto;
+}
+.hud{
+  display:flex;flex-direction:column;gap:8px;
+  margin-bottom:4px;
+}
+.turn-row{
+  display:flex;justify-content:space-between;align-items:baseline;
+  font-family:'Space Mono', monospace;
+  font-size:11px;color:var(--ink-soft);
+  letter-spacing:0.1em;text-transform:uppercase;
+}
+.turn-row span.turnval{color:var(--glow);}
+.mute-btn{cursor:pointer;font-size:13px;opacity:0.75;padding:2px 4px;transition:opacity .2s;}
+.mute-btn:hover{opacity:1;}
+#stageLabel{color:var(--gold);font-size:10.5px;}
+.stats-row{
+  display:grid;grid-template-columns:repeat(4,1fr);gap:8px;
+}
+.stat{
+  display:flex;flex-direction:column;align-items:center;gap:3px;
+  padding:6px 2px 8px;
+  background:rgba(0,0,0,0.18);
+  border:1px solid rgba(255,255,255,0.05);
+  border-radius:5px;
+}
+.stat-icon{font-size:clamp(15px,2.6vw,21px);line-height:1;filter:drop-shadow(0 0 4px rgba(0,0,0,0.6));}
+.stat-label{
+  font-family:'Cinzel', serif;font-weight:700;
+  font-size:clamp(8.5px,1.3vw,11px);letter-spacing:0.05em;
+  text-align:center;text-transform:uppercase;
+}
+.stat-label.cs{color:var(--violet);}
+.stat-label.sp{color:var(--red);}
+.stat-label.sn{color:var(--teal);}
+.stat-label.fv{color:var(--gold);}
+.stat-track{
+  position:relative;
+  width:100%;height:14px;
+  background:#100e08;
+  border:1px solid var(--parchment-edge);
+  border-radius:3px;
+  overflow:hidden;
+  box-shadow:inset 0 1px 3px rgba(0,0,0,0.6);
+}
+.stat-track::after{
+  content:"";position:absolute;left:50%;top:0;bottom:0;width:1px;
+  background:rgba(255,255,255,0.15);
+}
+.stat-fill{
+  position:absolute;left:0;top:0;bottom:0;
+  width:50%;
+  transition:width .5s cubic-bezier(.4,0,.2,1), background .3s;
+}
+.stat-fill.cs{background:linear-gradient(90deg,#5a3e78,var(--violet));}
+.stat-fill.sp{background:linear-gradient(90deg,#7a2c2c,var(--red));}
+.stat-fill.sn{background:linear-gradient(90deg,#276b5f,var(--teal));}
+.stat-fill.fv{background:linear-gradient(90deg,#8a6b2e,var(--gold));}
+.stat.danger{border-color:rgba(194,74,74,0.6);animation:pulseDanger 1s infinite;}
+@keyframes pulseDanger{
+  0%,100%{box-shadow:0 0 0 rgba(194,74,74,0);}
+  50%{box-shadow:0 0 10px 1px rgba(194,74,74,0.65);}
+}
+.stat-val{font-family:'Space Mono', monospace;font-size:clamp(13px,2.2vw,18px);font-weight:700;}
+.stat-val.cs{color:var(--violet);}
+.stat-val.sp{color:var(--red);}
+.stat-val.sn{color:var(--teal);}
+.stat-val.fv{color:var(--gold);}
+
+.inventory-row{
+  display:flex;gap:6px;flex-wrap:wrap;align-items:center;
+  min-height:32px;padding:2px 2px;
+}
+.status-strip{
+  display:flex;gap:6px;flex-wrap:wrap;align-items:center;
+  min-height:24px;padding:0 2px;
+}
+.consumable-row{display:flex;gap:6px;flex-wrap:wrap;align-items:center;min-height:30px;padding:0 2px;}
+.consumable-item{width:30px;height:30px;border-radius:5px;background:rgba(144,112,184,0.16);border:1px solid rgba(144,112,184,0.7);color:var(--parchment);display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:15px;box-shadow:0 0 8px rgba(144,112,184,0.18);}
+.consumable-item:hover{border-color:var(--glow);box-shadow:0 0 14px rgba(95,207,160,0.28);}
+.temple-visual{position:relative;width:100%;height:78px;border:1px solid rgba(199,165,90,0.22);border-radius:6px;background:linear-gradient(180deg,rgba(0,0,0,0.16),rgba(0,0,0,0.28));overflow:hidden;margin-top:1px;}
+.temple-visual::before{content:"";position:absolute;left:0;right:0;bottom:0;height:22px;background:linear-gradient(180deg,rgba(79,179,159,0.02),rgba(79,179,159,0.2));}
+.temple-part{position:absolute;opacity:0.2;filter:grayscale(0.8);transition:opacity .35s,filter .35s,transform .35s;}
+.temple-part.active{opacity:1;filter:none;transform:translateY(-1px);}
+.temple-main{left:50%;bottom:18px;width:82px;height:42px;transform:translateX(-50%);border:1px solid var(--gold);background:rgba(199,165,90,0.12);clip-path:polygon(50% 0,100% 38%,86% 100%,14% 100%,0 38%);}
+.temple-krypta{left:calc(50% - 39px);bottom:4px;width:78px;height:15px;border:1px solid #8f7a50;background:rgba(80,60,35,0.42);border-radius:50% 50% 2px 2px;}
+.temple-biblioteka{left:28px;bottom:29px;width:48px;height:32px;border:1px solid #9070b8;background:rgba(144,112,184,0.18);}
+.temple-pomost{right:18px;bottom:17px;width:82px;height:8px;border-top:2px solid #4fb39f;border-bottom:1px solid rgba(79,179,159,0.5);}
+.temple-pomost::after{content:"";position:absolute;right:-10px;top:-7px;width:16px;height:16px;border:1px solid #4fb39f;border-radius:50%;}
+.temple-sala{left:calc(50% + 38px);bottom:42px;width:30px;height:30px;border:1px solid var(--red);background:rgba(194,74,74,0.16);border-radius:50%;}
+.temple-label{position:absolute;left:8px;top:6px;font-family:'Space Mono', monospace;font-size:9px;color:var(--ink-soft);letter-spacing:0.05em;}
+.status-chip{
+  min-width:24px;height:24px;border-radius:4px;
+  background:rgba(95,207,160,0.08);
+  border:1px solid rgba(95,207,160,0.35);
+  display:flex;align-items:center;justify-content:center;
+  font-size:13px;cursor:help;
+}
+.status-chip.site{background:rgba(199,165,90,0.1);border-color:rgba(199,165,90,0.45);}
+.status-chip.ritual{
+  width:auto;padding:0 7px;
+  font-family:'Space Mono', monospace;font-size:10px;
+  color:var(--parchment-dark);
+  background:rgba(0,0,0,0.16);border-color:rgba(255,255,255,0.08);
+}
+.status-empty{
+  font-family:'Space Mono', monospace;font-size:9.5px;color:var(--ink-soft);
+  letter-spacing:0.05em;
+}
+.inv-item{
+  width:28px;height:28px;border-radius:5px;
+  background:rgba(199,165,90,0.12);
+  border:1px solid var(--gold);
+  display:flex;align-items:center;justify-content:center;
+  font-size:15px;cursor:help;
+  box-shadow:0 0 6px rgba(199,165,90,0.15);
+}
+.inv-empty{
+  font-family:'Space Mono', monospace;font-size:10px;color:var(--ink-soft);
+  letter-spacing:0.05em;
+}
+
+.card-wrap{
+  flex:1;
+  position:relative;
+  display:flex;align-items:center;justify-content:center;
+  min-height:0;
+  margin:6px 0;
+}
+#toast{
+  position:absolute;top:2px;left:50%;
+  transform:translateX(-50%) translateY(-8px);
+  background:linear-gradient(160deg,var(--parchment),var(--parchment-dark));
+  color:var(--ink);border:1px solid var(--parchment-edge);
+  padding:9px 15px;border-radius:4px;font-size:12.5px;line-height:1.4;
+  text-align:center;max-width:88%;
+  box-shadow:0 10px 26px rgba(0,0,0,0.55);
+  opacity:0;transition:opacity .25s, transform .25s;
+  pointer-events:none;z-index:30;
+}
+#toast.show{opacity:1;transform:translateX(-50%) translateY(0);}
+
+.choice-hint{
+  position:absolute;top:14px;
+  font-family:'Cinzel', serif;
+  font-size:11.5px;letter-spacing:0.08em;text-transform:uppercase;
+  padding:6px 10px;border:1px solid currentColor;border-radius:2px;
+  opacity:0;transition:opacity .12s;
+  pointer-events:none;
+  max-width:38%;text-align:center;line-height:1.3;
+  z-index:5;
+}
+.choice-hint.left{left:6px;color:var(--red);transform:rotate(-6deg);}
+.choice-hint.right{right:6px;color:var(--teal);transform:rotate(6deg);}
+
+.card{
+  position:relative;
+  height:100%;width:auto;
+  max-width:min(92%, 460px);
+  aspect-ratio:3/4.1;
+  background:
+    radial-gradient(circle at 30% 20%, rgba(0,0,0,0.05), transparent 60%),
+    linear-gradient(160deg, var(--parchment) 0%, var(--parchment-dark) 100%);
+  border:1px solid var(--parchment-edge);
+  border-radius:6px;
+  box-shadow:0 18px 50px -12px rgba(0,0,0,0.7), inset 0 0 60px rgba(60,45,20,0.15);
+  padding:20px 20px;
+  display:flex;flex-direction:column;align-items:center;
+  cursor:grab;
+  user-select:none;touch-action:none;
+  will-change:transform;
+}
+.card:active{cursor:grabbing;}
+.card svg.tentacle-border{
+  position:absolute;inset:0;width:100%;height:100%;pointer-events:none;
+  opacity:0.5;
+}
+.card-icon{
+  font-size:clamp(36px,7vw,54px);line-height:1;margin-bottom:8px;
+  filter:sepia(0.3) saturate(0.8);
+}
+.card-name{
+  font-family:'Cinzel', serif;font-weight:700;
+  font-size:clamp(13.5px,2vw,18px);letter-spacing:0.04em;
+  color:var(--ink);text-align:center;margin-bottom:10px;
+  border-bottom:1px solid var(--parchment-edge);
+  padding-bottom:7px;width:82%;
+}
+.card-text{
+  font-size:clamp(14.5px,2.1vw,20px);line-height:1.48;color:var(--ink);
+  text-align:center;font-style:italic;
+  flex:1;display:flex;align-items:center;
+}
+.card-footer{
+  font-family:'Space Mono', monospace;font-size:clamp(8px,1vw,10px);color:var(--ink-soft);
+  letter-spacing:0.1em;margin-top:4px;min-height:11px;
+}
+
+.choices-row{
+  display:flex;gap:10px;margin-top:2px;
+}
+.choice-btn{
+  flex:1;
+  background:rgba(15,25,20,0.5);
+  border:1px solid var(--parchment-edge);
+  color:var(--parchment-dark);
+  font-family:'EB Garamond', serif;font-size:clamp(12.5px,1.7vw,16px);
+  padding:12px 8px;border-radius:3px;
+  cursor:pointer;line-height:1.28;
+  transition:all .2s;
+  min-height:54px;
+}
+.choice-btn.left:hover{border-color:var(--red);color:#e8b0b0;}
+.choice-btn.right:hover{border-color:var(--teal);color:#b0e8d5;}
+.choice-btn.hidden-choice{visibility:hidden;}
+.choice-btn.locked{
+  opacity:0.42;border-style:dashed;cursor:not-allowed;color:#a89a76;
+}
+.choice-btn.locked:hover{border-color:var(--parchment-edge);color:#a89a76;}
+.choice-btn .arrow{opacity:0.6;font-size:10.5px;display:block;margin-bottom:3px;letter-spacing:0.15em;}
+
+/* ---------- END SCREEN ---------- */
+#screen-end{padding:40px 26px;text-align:center;}
+.end-title{
+  font-family:'Cinzel', serif;font-weight:900;
+  font-size:clamp(24px,4vw,38px);color:var(--red);
+  letter-spacing:0.05em;margin-bottom:18px;
+  text-shadow:0 0 30px rgba(155,58,58,0.35);
+}
+.end-title.good{color:var(--glow);text-shadow:0 0 30px rgba(95,207,160,0.4);}
+.end-text{
+  max-width:clamp(380px,54vw,640px);font-size:clamp(15px,1.3vw,18px);line-height:1.65;
+  color:var(--parchment-dark);margin-bottom:16px;
+  white-space:pre-line;
+}
+.end-stats{
+  font-family:'Space Mono', monospace;font-size:11px;color:var(--ink-soft);
+  margin-bottom:30px;letter-spacing:0.05em;
+}
+.fade-in{animation:fadeIn .6s ease both;}
+@keyframes fadeIn{from{opacity:0;transform:translateY(8px);}to{opacity:1;transform:none;}}
+</style>
+</head>
+<body>
+<div id="app">
+
+  <div id="screen-start" class="screen active fade-in">
+    <svg class="eye-glyph" viewBox="0 0 64 64" fill="none">
+      <path d="M4 32 C16 12, 48 12, 60 32 C48 52, 16 52, 4 32Z" stroke="#5fcfa0" stroke-width="1.5"></path>
+      <circle cx="32" cy="32" r="9" stroke="#5fcfa0" stroke-width="1.5"></circle>
+      <circle cx="32" cy="32" r="3" fill="#5fcfa0"></circle>
+    </svg>
+    <div class="title-main">KULT PRZEDWIECZNYCH</div>
+    <div class="title-sub">Nim Ono się przebudzi</div>
+    <div class="intro-text">Odziedziczyłeś zapleśniałą kapliczkę nad jeziorem, garstkę zbłąkanych dusz
+    i księgę, która czasem prosi o świeżą rybę. Twoim zadaniem jest zbudować kult dostatecznie liczny,
+    dyskretny, zdrowy na umyśle i miły Przedwiecznym — by w końcu wyrwać R'lyeh z dna oceanu.
+    Każdej nocy ktoś (albo coś) przychodzi do twoich drzwi. Wybieraj mądrze. Albo przynajmniej ciekawie.</div>
+    <div class="origin-grid" id="originGrid"><button class="origin-card selected" data-origin="ksiegarz" title="Antykwariusz z portu. Częściej rozumie księgi, zanim księgi zrozumieją jego.">
+      <div class="origin-head"><span class="origin-icon">📚</span><span>Księgarz</span></div>
+      <div class="origin-stats">K 45 · P 45 · R 60 · Ł 50</div>
+      <div class="origin-desc">Antykwariusz z portu. Częściej rozumie księgi, zanim księgi zrozumieją jego.</div>
+      <div class="origin-item">Szukaj: 📄 Wyrwana Strona</div>
+    </button><button class="origin-card " data-origin="rybak" title="Człowiek zatoki. Morze czasem oddaje mu rzeczy, których nigdy nie powinno mieć.">
+      <div class="origin-head"><span class="origin-icon">🎣</span><span>Rybak</span></div>
+      <div class="origin-stats">K 55 · P 45 · R 45 · Ł 60</div>
+      <div class="origin-desc">Człowiek zatoki. Morze czasem oddaje mu rzeczy, których nigdy nie powinno mieć.</div>
+      <div class="origin-item">Szukaj: 🐟 Łuska Głębinowca</div>
+    </button><button class="origin-card " data-origin="lekarz" title="Racjonalista z gabinetu nad apteką. Lepiej znosi obłęd, bo zbyt długo nazywał go objawem.">
+      <div class="origin-head"><span class="origin-icon">🩺</span><span>Lekarz</span></div>
+      <div class="origin-stats">K 45 · P 50 · R 70 · Ł 40</div>
+      <div class="origin-desc">Racjonalista z gabinetu nad apteką. Lepiej znosi obłęd, bo zbyt długo nazywał go objawem.</div>
+      <div class="origin-item">Szukaj: 📑 Notatki Profesora</div>
+    </button><button class="origin-card " data-origin="policjant" title="Stróż prawa z dowodem, którego nie ma w magazynie. Podejrzenia rosną wolniej.">
+      <div class="origin-head"><span class="origin-icon">👮</span><span>Policjant</span></div>
+      <div class="origin-stats">K 45 · P 35 · R 65 · Ł 40</div>
+      <div class="origin-desc">Stróż prawa z dowodem, którego nie ma w magazynie. Podejrzenia rosną wolniej.</div>
+      <div class="origin-item">Szukaj: 📓 Notatnik Detektywa</div>
+    </button><button class="origin-card " data-origin="latarnik" title="Widzący światła pod wodą. Relikwie odpoczywają krócej, a Soczewki nie budzą Podejrzeń.">
+      <div class="origin-head"><span class="origin-icon">🔦</span><span>Latarnik</span></div>
+      <div class="origin-stats">K 45 · P 45 · R 55 · Ł 55</div>
+      <div class="origin-desc">Widzący światła pod wodą. Relikwie odpoczywają krócej, a Soczewki nie budzą Podejrzeń.</div>
+      <div class="origin-item">Szukaj: 🔍 Soczewki Latarnika</div>
+    </button><button class="origin-card " data-origin="detektyw" title="Zaczyna ciszej i chłodniej. Każdy wzrost Podejrzeń jest trochę mniejszy.">
+      <div class="origin-head"><span class="origin-icon">🕵️</span><span>Detektyw</span></div>
+      <div class="origin-stats">K 45 · P 35 · R 60 · Ł 45</div>
+      <div class="origin-desc">Zaczyna ciszej i chłodniej. Każdy wzrost Podejrzeń jest trochę mniejszy.</div>
+      <div class="origin-item">Szukaj: 📓 Notatnik Detektywa</div>
+    </button><button class="origin-card " data-origin="badacz" title="Ma mapę i metodę. Każde przygotowanie rytuału dostaje dodatkowy krok.">
+      <div class="origin-head"><span class="origin-icon">🎓</span><span>Badacz</span></div>
+      <div class="origin-stats">K 40 · P 55 · R 65 · Ł 45</div>
+      <div class="origin-desc">Ma mapę i metodę. Każde przygotowanie rytuału dostaje dodatkowy krok.</div>
+      <div class="origin-item">Szukaj: 🌌 Gwiezdna Mapa</div>
+    </button><button class="origin-card " data-origin="pijak" title="Nikt mu nie wierzy, nawet gdy mówi prawdę. Ukrywanie śladów bywa skuteczniejsze, ale kosztuje rozum.">
+      <div class="origin-head"><span class="origin-icon">🍺</span><span>Pijak</span></div>
+      <div class="origin-stats">K 55 · P 40 · R 40 · Ł 55</div>
+      <div class="origin-desc">Nikt mu nie wierzy, nawet gdy mówi prawdę. Ukrywanie śladów bywa skuteczniejsze, ale kosztuje rozum.</div>
+      <div class="origin-item">Szukaj: ⚫ Czarna Perła</div>
+    </button><button class="origin-card " data-origin="oblakany" title="Zaczyna blisko głosów. Pokusy dają więcej Łaski i zabierają więcej Poczytalności.">
+      <div class="origin-head"><span class="origin-icon">🌀</span><span>Obłąkany</span></div>
+      <div class="origin-stats">K 50 · P 55 · R 25 · Ł 75</div>
+      <div class="origin-desc">Zaczyna blisko głosów. Pokusy dają więcej Łaski i zabierają więcej Poczytalności.</div>
+      <div class="origin-item">Szukaj: 🖍️ Rysunek R'lyeh</div>
+    </button><button class="origin-card " data-origin="ksiadz" title="Trzyma się rozumu, lecz Przedwieczni patrzą chłodno. Lepiej ukrywa świątynię.">
+      <div class="origin-head"><span class="origin-icon">⛪</span><span>Ksiądz</span></div>
+      <div class="origin-stats">K 50 · P 45 · R 75 · Ł 25</div>
+      <div class="origin-desc">Trzyma się rozumu, lecz Przedwieczni patrzą chłodno. Lepiej ukrywa świątynię.</div>
+      <div class="origin-item">Szukaj: 🗝️ Klucz do Krypty</div>
+    </button></div>
+    <button class="btn-main" id="btnStart">Rozpocznij jako Księgarz</button>
+    <div class="legend">
+      👥 <b>Liczebność kultu</b> · 👁 <b>Podejrzenia badaczy</b> · 🧠 <b>Poczytalność przywódcy</b> · 🐙 <b>Łaska Przedwiecznych</b><br>
+      Każda z czterech miar ma dwie granice. Przekrocz którąkolwiek — a historia twojego kultu skończy się,
+      tak czy inaczej. Zbierane relikwie czasem otwierają nowe, zablokowane wybory — a niektóre z nich
+      są kluczem do dokończenia Aktu I.
+    </div>
+  </div>
+
+  <div id="screen-game" class="screen">
+    <div class="hud">
+      <div class="turn-row"><span>Noc <span class="turnval" id="turnCount">0</span></span><span id="stageLabel"></span><span id="muteBtn" class="mute-btn" title="Wycisz/włącz dźwięk">🔊</span></div>
+      <div class="stats-row">
+        <div class="stat" id="stat-cs" title="Liczebność kultu">
+          <div class="stat-icon">👥</div>
+          <div class="stat-label cs">Kult</div>
+          <div class="stat-track"><div class="stat-fill cs" id="fill-cs"></div></div>
+          <div class="stat-val cs" id="val-cs">50</div>
+        </div>
+        <div class="stat" id="stat-sp" title="Podejrzenia badaczy">
+          <div class="stat-icon">👁</div>
+          <div class="stat-label sp">Podejrzenia</div>
+          <div class="stat-track"><div class="stat-fill sp" id="fill-sp"></div></div>
+          <div class="stat-val sp" id="val-sp">50</div>
+        </div>
+        <div class="stat" id="stat-sn" title="Poczytalność przywódcy">
+          <div class="stat-icon">🧠</div>
+          <div class="stat-label sn">Poczytalność</div>
+          <div class="stat-track"><div class="stat-fill sn" id="fill-sn"></div></div>
+          <div class="stat-val sn" id="val-sn">50</div>
+        </div>
+        <div class="stat" id="stat-fv" title="Łaska Przedwiecznych">
+          <div class="stat-icon">🐙</div>
+          <div class="stat-label fv">Łaska</div>
+          <div class="stat-track"><div class="stat-fill fv" id="fill-fv"></div></div>
+          <div class="stat-val fv" id="val-fv">50</div>
+        </div>
+      </div>
+      <div class="inventory-row" id="inventoryRow"></div>
+      <div class="consumable-row" id="consumableRow"></div>
+      <div class="status-strip" id="specialistRow"></div>
+      <div class="temple-visual" id="templeVisual"><div class="temple-label">Świątynia</div><div class="temple-part temple-main active" title="Kapliczka"></div><div class="temple-part temple-krypta" data-site="krypta" title="Krypta pod Kaplicą"></div><div class="temple-part temple-biblioteka" data-site="biblioteka" title="Biblioteka Pleśni"></div><div class="temple-part temple-pomost" data-site="pomost" title="Ukryty Pomost"></div><div class="temple-part temple-sala" data-site="sala" title="Sala Szeptów"></div></div>
+      <div class="status-strip" id="siteRow"></div>
+      <div class="status-strip" id="ritualRow"></div>
+    </div>
+
+    <div class="card-wrap">
+      <div id="toast"></div>
+      <div class="choice-hint left" id="hintLeft">-</div>
+      <div class="choice-hint right" id="hintRight">-</div>
+      <div class="card" id="card">
+        <svg class="tentacle-border" id="tentacleSvg" viewBox="0 0 340 460"></svg>
+        <div class="card-icon" id="cardIcon">🕯️</div>
+        <div class="card-name" id="cardName">—</div>
+        <div class="card-text" id="cardText">—</div>
+        <div class="card-footer" id="cardFooter"></div>
+      </div>
+    </div>
+
+    <div class="choices-row">
+      <button class="choice-btn left" id="btnLeft"><span class="arrow">◄ LEWO</span><span id="btnLeftText"></span></button>
+      <button class="choice-btn right" id="btnRight"><span class="arrow">PRAWO ►</span><span id="btnRightText"></span></button>
+    </div>
+  </div>
+
+  <div id="screen-end" class="screen">
+    <div class="end-title" id="endTitle">—</div>
+    <div class="end-text" id="endText">—</div>
+    <div class="end-stats" id="endStats"></div>
+    <button class="btn-main" id="btnRestart">Zacznij Nowy Kult</button>
+  </div>
+
+  <div class="story-modal" id="storyModal">
+    <div class="story-box">
+      <div class="story-title" id="storyTitle"></div>
+      <div class="story-text" id="storyText"></div>
+      <button class="btn-main" id="btnStoryContinue">Dalej</button>
+    </div>
+  </div>
+
+</div>
+
+<script>
+(function(){
+
+/* ============ PRZEDMIOTY ============ */
+
+const ITEMS = {
+ figurka:{name:"Kamienna Figurka", icon:"🗿", desc:"Mała, wilgotna figurka o nieproporcjonalnych kończynach. Uspokaja niektórych ludzi. Innych przeraża jeszcze bardziej."},
+ notatnikDetektywa:{name:"Notatnik Detektywa", icon:"📓", desc:"Odebrany kątem oka nocnemu obserwatorowi. Pełen dat, godzin i rysunków waszej świątyni."},
+ soczewkiLatarnika:{name:"Soczewki Latarnika", icon:"🔍", desc:"Szkła, przez które morze wygląda... bliżej, niż powinno."},
+ jajoZGlebin:{name:"Jajo z Głębin", icon:"🥚", desc:"Ciepłe. Pulsuje raz na kilka godzin. Lepiej nie kładź go blisko ognia."},
+ notatkiProfesora:{name:"Notatki Profesora", icon:"📑", desc:"Odręczne notatki badacza z Arkham. Więcej w nich prawdy, niż ich autor mógłby znieść."},
+ wyrwanaStrona:{name:"Wyrwana Strona", icon:"📄", desc:"Fragment księgi, który ktoś (może ty?) wyrwał w środku nocy i schował."},
+ kluczKrypty:{name:"Klucz do Krypty", icon:"🗝️", desc:"Zimny nawet w upalny dzień. Pachnie solą i czymś starszym niż sól."},
+ skrzyniaDynamitu:{name:"Skrzynia Dynamitu", icon:"🧨", desc:"Stary górnik zaklinał się, że jest \"prawie stabilna\"."},
+ luskaGlebinowca:{name:"Łuska Głębinowca", icon:"🐟", desc:"Zimna, wilgotna, lekko fosforyzująca w ciemności."},
+ rysunekRlyeh:{name:"Rysunek R'lyeh", icon:"🖍️", desc:"Narysowany kredkami przez dziecko, które nigdy nie widziało oceanu z bliska."},
+ kompasZKosci:{name:"Kompas z Kości", icon:"🧭", desc:"Igła zawsze wskazuje morze. Nawet gdy trzymasz go do góry nogami."},
+ czarnaPerla:{name:"Czarna Perła", icon:"⚫", desc:"Nie odbija światła. Wygląda, jakby to światło odbijało się w niej."},
+ pioroBialegoKruka:{name:"Pióro Białego Kruka", icon:"🪶", desc:"Białe piórko, mimo że żadnego kruka — białego czy jakiegokolwiek — nikt tu nie widział."},
+ krwawyMedalion:{name:"Krwawy Medalion", icon:"📿", desc:"Wciąż ciepły. Pulsuje w rytm czyjegoś serca. Niekoniecznie twojego."},
+ zlamanySztylet:{name:"Złamany Rytualny Sztylet", icon:"🗡️", desc:"Ostrze złamane w połowie — jakby ktoś próbował nim dźgnąć coś dużo twardszego niż człowiek."},
+ gwiezdnaMapa:{name:"Gwiezdna Mapa", icon:"🌌", desc:"Konstelacje układają się w kształty, jakich nie uczono w żadnej szkole."},
+ dzwonZWraku:{name:"Dzwon z Wraku", icon:"🔔", desc:"Dzwoni sam, gdy nikt go nie dotyka. Najgłośniej o trzeciej w nocy."},
+ srebrnyKlucz:{name:"Srebrny Klucz", icon:"🔑", desc:"Nie wiadomo, do czego pasuje. Jeszcze."},
+ okoGlebinowca:{name:"Oko Głębinowca", icon:"👁️‍🗨️", desc:"Wielkości pięści, wciąż wilgotne i uparcie skierowane w twoją stronę."},
+};
+
+/* ============ NOWE SYSTEMY ============ */
+
+const ORIGINS = {
+ ksiegarz:{name:"Księgarz", icon:"📚", item:"wyrwanaStrona", stats:{cs:45,sp:45,sn:60,fv:50}, desc:"Antykwariusz z portu. Częściej rozumie księgi, zanim księgi zrozumieją jego.", story:`Od piętnastu lat prowadzisz niewielki antykwariat przy porcie.
+
+Interes idzie fatalnie.
+
+Marynarze wolą rum od literatury.
+
+Studenci kupują książki tylko wtedy, gdy można nimi podpierać chwiejące się stoły.
+
+Najwierniejszym klientem jest stary kot, który śpi między półkami.
+
+Pewnej burzowej nocy rybak przynosi skrzynię wyłowioną z morza.
+
+— Zapłacę książkami.
+
+Nie masz nic przeciwko.
+
+W środku znajduje się jedna księga.
+
+Bez tytułu.
+
+Bez autora.
+
+Kiedy otwierasz pierwszą stronę...
+
+na drugiej pojawia się twoje imię.`},
+ rybak:{name:"Rybak", icon:"🎣", item:"luskaGlebinowca", stats:{cs:55,sp:45,sn:45,fv:60}, desc:"Człowiek zatoki. Morze czasem oddaje mu rzeczy, których nigdy nie powinno mieć.", story:`Morze od miesięcy jest martwe.
+
+Sieci wracają puste.
+
+Koledzy zaczynają mówić, że zatoka została przeklęta.
+
+Podczas sztormu wyławiasz ciężką drewnianą skrzynię.
+
+Nie ma żadnych oznaczeń.
+
+Tylko wyryty znak przypominający ośmiornicę.
+
+Sprzedajesz wszystko poza jedną dziwną księgą.
+
+Następnej nocy śni ci się ogromne miasto pod wodą.
+
+Rano twoje łóżko jest mokre od słonej wody.`},
+ lekarz:{name:"Lekarz", icon:"🩺", item:"notatkiProfesora", stats:{cs:45,sp:50,sn:70,fv:40}, desc:"Racjonalista z gabinetu nad apteką. Lepiej znosi obłęd, bo zbyt długo nazywał go objawem.", story:`Przyjmujesz pacjentów z coraz dziwniejszymi przypadłościami.
+
+Ludzie słyszą śpiew fal.
+
+Nie mrugają.
+
+Mówią przez sen w języku, którego nikt nie zna.
+
+Starsza kobieta zostawia ci księgę.
+
+Twierdzi, że tylko ty "jeszcze słyszysz właściwy głos."
+
+Nazajutrz okazuje się, że...
+
+kobieta zmarła trzydzieści lat temu.`},
+ policjant:{name:"Policjant", icon:"👮", item:"notatnikDetektywa", stats:{cs:45,sp:35,sn:65,fv:40}, desc:"Stróż prawa z dowodem, którego nie ma w magazynie. Podejrzenia rosną wolniej.", story:`Miasteczko jest spokojne.
+
+Największym przestępstwem ostatnich miesięcy była kradzież czterech kur.
+
+Podczas przeszukania opuszczonego domu znajdujesz ukryte przejście.
+
+Za nim leży szkielet.
+
+Na kolanach trzyma księgę.
+
+Kiedy próbujesz ją zabrać...
+
+szkielet rozpada się w pył.
+
+Raport policyjny, który piszesz tego dnia, kończy się zdaniem:
+
+"Dowód rzeczowy zniknął."
+
+Nie pamiętasz, dlaczego to napisałeś.`},
+ latarnik:{name:"Latarnik", icon:"🔦", item:"soczewkiLatarnika", stats:{cs:45,sp:45,sn:55,fv:55}, desc:"Widzący światła pod wodą. Relikwie odpoczywają krócej, a Soczewki nie budzą Podejrzeń.", story:`Przez lata pilnowałeś latarni, choć statki coraz rzadziej potrzebowały jej światła.
+
+Pewnej nocy snop lampy sam odwrócił się od horyzontu i wbił prosto w czarną wodę.
+
+Pod powierzchnią zobaczyłeś ulicę.
+
+Potem okna.
+
+Potem coś, co odpowiedziało światłem.
+
+Rano w mechanizmie latarni leżała mokra księga, a soczewki pachniały solą i snem.`},
+ detektyw:{name:"Detektyw", icon:"🕵️", item:"notatnikDetektywa", stats:{cs:45,sp:35,sn:60,fv:45}, desc:"Zaczyna ciszej i chłodniej. Każdy wzrost Podejrzeń jest trochę mniejszy.", story:`Przyjechałeś do miasteczka za zaginionym profesorem.
+
+Znalazłeś jego pokój zamknięty od środka, mokry dywan i ślady soli na suficie.
+
+W szufladzie leżał notatnik.
+
+Ostatnia strona zawierała twoje nazwisko, datę jutrzejszą i krótką instrukcję:
+
+"Nie oddawaj księgi policji. Ona już tam była."`},
+ badacz:{name:"Badacz", icon:"🎓", item:"gwiezdnaMapa", stats:{cs:40,sp:55,sn:65,fv:45}, desc:"Ma mapę i metodę. Każde przygotowanie rytuału dostaje dodatkowy krok.", story:`Przybyłeś tu z zamiarem napisania krótkiego artykułu o lokalnych przesądach.
+
+Po tygodniu miałeś mapę nieba, której nie dało się dopasować do żadnej półkuli, i nagranie pieśni śpiewanej przez puste nabrzeże.
+
+Kiedy złożyłeś notatki w całość, powstała z nich strona księgi.
+
+Nie twoim pismem.
+
+Ale z twoim podpisem.`},
+ pijak:{name:"Pijak", icon:"🍺", item:"czarnaPerla", stats:{cs:55,sp:40,sn:40,fv:55}, desc:"Nikt mu nie wierzy, nawet gdy mówi prawdę. Ukrywanie śladów bywa skuteczniejsze, ale kosztuje rozum.", story:`W porcie znają cię wszyscy i nikt nie słucha cię naprawdę.
+
+To dlatego przeżyłeś noc, gdy beczka rumu zaczęła szeptać spod korka.
+
+Wypiłeś, żeby uciszyć głos.
+
+Głos został.
+
+Na dnie kufla znalazłeś czarną perłę.
+
+Od tamtej pory każde kłamstwo brzmi w twoich ustach wiarygodnie, a każda prawda jak pijacka bajka.`},
+ oblakany:{name:"Obłąkany", icon:"🌀", item:"rysunekRlyeh", stats:{cs:50,sp:55,sn:25,fv:75}, desc:"Zaczyna blisko głosów. Pokusy dają więcej Łaski i zabierają więcej Poczytalności.", story:`Nie pamiętasz, kiedy pierwszy raz usłyszałeś śpiew spod podłogi.
+
+Lekarze nazwali go nerwami.
+
+Rodzina nazwała go hańbą.
+
+Ty nazwałeś go kierunkiem.
+
+Pewnego ranka obudziłeś się z dziecięcym rysunkiem w dłoni.
+
+Przedstawiał miasto pod wodą.
+
+Podpis brzmiał: "dom".`},
+ ksiadz:{name:"Ksiądz", icon:"⛪", item:"kluczKrypty", stats:{cs:50,sp:45,sn:75,fv:25}, desc:"Trzyma się rozumu, lecz Przedwieczni patrzą chłodno. Lepiej ukrywa świątynię.", story:`Przez lata mówiłeś ludziom, że ciemność jest tylko brakiem światła.
+
+Potem w starej krypcie znalazłeś drzwi, których nie było w żadnym planie kościoła.
+
+Klucz wisiał na twojej szyi od święceń, choć nigdy wcześniej go nie zauważyłeś.
+
+Za drzwiami leżała księga.
+
+Na pierwszej stronie zapisano modlitwę.
+
+Nie do Boga, którego znałeś.`},
+};
+
+let selectedOrigin = 'ksiegarz';
+let storyStep = 'origin';
+
+const CONSUMABLES = {
+ okularyPrawdy:{name:"Okulary Prawdy", icon:"👓", desc:"Przez 7 nocy pokazują przewidywane skutki wyborów przed ich podjęciem."},
+ klepsydraCofniecia:{name:"Pęknięta Klepsydra", icon:"⌛", desc:"Cofa czas o dwie tury. Działa nawet po zakończeniu gry."},
+ kotwicaRownowagi:{name:"Kotwica Równowagi", icon:"⚓", desc:"Ustawia najbardziej skrajną statystykę na 50."},
+ katalogRelikwii:{name:"Katalog Relikwii", icon:"📦", desc:"Pozwala wybrać jeden przedmiot fabularny z puli."},
+ okoNastepnejNocy:{name:"Oko Następnej Nocy", icon:"🔮", desc:"Pokazuje i ustawia następne wydarzenie."},
+ dziwnaMaska:{name:"Dziwna Maska", icon:"🎭", desc:"Założona raz, nigdy nie schodzi naprawdę. Użycie natychmiast kończy Akt I i otwiera Ścieżkę Hastura."},
+};
+const STORY_ITEM_POOL = ["figurka","krwawyMedalion","zlamanySztylet","gwiezdnaMapa","dzwonZWraku","srebrnyKlucz","okoGlebinowca","kompasZKosci","czarnaPerla","kluczKrypty","soczewkiLatarnika","notatkiProfesora"];
+
+const SITES = {
+ krypta:{name:"Krypta pod Kaplicą", icon:"⚰️", desc:"Podejrzane rzeczy znikają niżej, niż sięga ciekawość badaczy."},
+ biblioteka:{name:"Biblioteka Pleśni", icon:"📚", desc:"Karty wiedzy pojawiają się częściej, a badacz lepiej rozumie rytuały."},
+ pomost:{name:"Ukryty Pomost", icon:"🌊", desc:"Łatwiej przygotowywać krąg nad wodą i korzystać z relikwii morza."},
+ sala:{name:"Sala Szeptów", icon:"🕯️", desc:"Pokusy Przedwiecznych stają się silniejsze i bardziej niebezpieczne."},
+};
+
+const RITUALS = {
+ piesn:{name:"Pieśń", icon:"♪", max:3},
+ krag:{name:"Krąg", icon:"◎", max:3},
+ ofiara:{name:"Ofiara", icon:"✦", max:3},
+};
+
+function isOrigin(id){ return !!(state && state.origin===id); }
+function currentOrigin(){ return ORIGINS[(state && state.origin) || selectedOrigin] || ORIGINS.ksiegarz; }
+function hasSite(id){ return !!(state && state.sites && state.sites[id]); }
+function ritualLevel(id){ return (state && state.ritualPrep && state.ritualPrep[id]) || 0; }
+function ritualTotal(){ return Object.keys(RITUALS).reduce((sum,id)=>sum+ritualLevel(id),0); }
+function ritualCompleteEnough(){ return ritualLevel('piesn')>=2 && ritualLevel('krag')>=2 && ritualLevel('ofiara')>=2; }
+
+/* ============ ZWYKŁE KARTY ============ */
+
+const CARDS = [
+ {i:"🎣",n:"Dziwny Rybak",t:"Stary rybak twierdzi, że morze do niego mówi. Zapytany, co mówi, odpowiada tylko: \"żeby się pospieszyć\".",
+  L:{t:"Zaprosić do kultu",e:{cs:8,sn:-4,fv:3}}, R:{t:"Uznać za wariata",e:{sn:2,cs:-2}}},
+ {i:"🗿",n:"Dziwna Figurka",t:"Dziecko z sąsiedztwa przynosi ci dziwną, kamienną figurkę znalezioną na plaży. Chce za nią pięć groszy.",
+  L:{t:"Odkupić",e:{cs:-5,fv:4},grant:{item:"figurka",chance:1}}, R:{t:"Oddać proboszczowi",e:{sp:-4}}},
+ {i:"💰",n:"Propozycja Składek",t:"Jeden z wyznawców proponuje, żeby kult zaczął pobierać regularne składki \"na potrzeby rytualne\".",
+  L:{t:"Zgoda",e:{cs:10,sp:5}}, R:{t:"Dobrowolne datki",e:{cs:3}}},
+ {i:"📖",n:"Głodna Księga",t:"Księga na ołtarzu wydziela zapach świeżej ryby. Strony delikatnie się poruszają, jakby oddychały.",
+  L:{t:"Spełnij rytuał",e:{fv:6,sn:-3}}, R:{t:"Zignoruj",e:{sn:2,fv:-5}}},
+ {i:"👁️",n:"Ktoś Śledzi Świątynię",t:"Od kilku nocy w krzakach za świątynią coś, albo ktoś, siedzi bez ruchu i patrzy.",
+  L:{t:"Zastaw pułapkę",e:{sp:5},grant:{item:"notatnikDetektywa",chance:s=>(isOrigin('policjant')||isOrigin('detektyw'))?1:0.5}}, R:{t:"Pozwól odejść",e:{sp:-3}}},
+ {i:"🎪",n:"Festyn Burmistrza",t:"Burmistrz organizuje festyn miejski i zaprasza \"wszystkie lokalne organizacje\", bez wyjątków.",
+  L:{t:"Wystaw stoisko",e:{cs:8,sp:2}}, R:{t:"Ukryj się",e:{sp:-3}}},
+ {i:"🐬",n:"Delfin z Uśmiechem",t:"Na plaży leży martwy delfin. W jego pysku, zamiast delfinich zębów, tkwi rząd ludzkich zębów — idealnie równych.",
+  L:{t:"Zbadaj",e:{fv:7,sn:-5}}, R:{t:"Spalić",e:{sn:2}}},
+ {i:"🕯️",n:"Kradzież Świecy",t:"Mewa wleciała przez okno kapliczki i odleciała z rytualną świecą w dziobie.",
+  L:{t:"Gonisz mewę",chance:0.5,successT:"Odzyskujesz świecę.",successE:{},failT:"Mewa wygrywa. Tracisz nerwy.",failE:{sn:-3}},
+  R:{t:"Kup nową",e:{cs:-5}}},
+ {i:"🗯️",n:"Spór Teologiczny",t:"Dwóch członków kultu pokłóciło się na środku modlitwy o to, czy Cthulhu ma brodę.",
+  L:{t:"Rozstrzygnij spór",e:{cs:3,sn:-2}}, R:{t:"Niech walczą",e:{cs:-5,fv:2}}},
+ {i:"📚",n:"Podejrzliwa Bibliotekarka",t:"Bibliotekarka zauważyła, że od miesiąca wypożyczasz wyłącznie księgi o \"nieokreślonych, niewymownych rzeczach\".",
+  L:{t:"Oczaruj ją",chance:0.4,successT:"Bibliotekarka przyłącza się do kultu.",successE:{cs:6},failT:"Nic z tego. Odchodzi zaniepokojona.",failE:{}},
+  R:{t:"Zastrasz",e:{sp:5}}},
+ {i:"🐈‍⬛",n:"Czarny Kot",t:"Od kilku tygodni czarny kot przynosi pod twoje drzwi ludzkie palce. Za każdym razem są świeże. Dziś zostawił ich aż pięć.",
+  L:{t:"Nakarm kota",e:{fv:5,cs:2,sn:-3},setFlag:"catFed"}, R:{t:"Przepędź go",e:{sn:4,fv:-4},setFlag:"catGone"}},
+ {i:"🗼",n:"Zagadkowa Latarnia",t:"Latarnik przysięga, że każdej nocy światło latarni kieruje się nie ku morzu, lecz pod wodę. Rybacy odmawiają wypłynięcia.",
+  L:{t:"Wejdź na latarnię",e:{fv:6,sn:-5},grant:{item:"soczewkiLatarnika",chance:s=>isOrigin('latarnik')?1:0.3}}, R:{t:"Zamknij latarnię",e:{sp:-5,fv:-4}}},
+ {i:"🥚",n:"Gigantyczne Jajo",t:"Rybacy wyciągnęli z sieci ogromne, miękkie jajo. W środku coś porusza się bardzo powoli.",
+  L:{t:"Zabierz je",e:{fv:8},grant:{item:"jajoZGlebin",chance:1}}, R:{t:"Rozbij",e:{sn:5,fv:-8,sp:2}}},
+ {i:"🎩",n:"Badacz z Arkham",t:"Do miasteczka przyjeżdża profesor badający lokalne legendy. Zadaje zdecydowanie zbyt wiele pytań.",
+  L:{t:"Zaproś go na kolację",chance:0.5,successT:"Rozluźnia się przy winie i zapomina notatnik na stole.",successE:{sp:-5},successGrant:"notatkiProfesora",
+     failT:"Kolacja nie pomaga — wraca jeszcze bardziej podejrzliwy.",failE:{sp:3}},
+  R:{t:"Spróbuj go zabić",chance:0.5,successT:"Znika bez śladu. Lokalna prasa nazwie to \"zaginięciem\".",successE:{fv:5,sp:10},
+     failT:"Nie udaje się. Teraz to on poluje na was.",failE:{fv:5,sp:10},failFlag:"arkhamEnemy"}},
+ {i:"📄",n:"Zaginiona Strona",t:"Jedna strona księgi zniknęła. Nie pamiętasz, żebyś ją wyrywał.",
+  L:{t:"Szukaj",e:{cs:-4,sn:5},grant:{item:"wyrwanaStrona",chance:s=>isOrigin('ksiegarz')?1:0.4}}, R:{t:"Czytaj dalej",e:{fv:8,sn:-5}}},
+ {i:"⛪",n:"Zaproszenie na Herbatę",t:"Proboszcz zaprasza cię na herbatę. Twierdzi, że \"coś złego dzieje się w mieście\". Patrzy ci prosto w oczy.",
+  L:{t:"Idź",e:{sp:-5,sn:2},grant:{item:"kluczKrypty",chance:s=>isOrigin('ksiadz')?1:0.35}}, R:{t:"Odmów",e:{fv:3,sp:5}}},
+ {i:"🌑",n:"Noc Bez Księżyca",t:"Niebo jest całkowicie czarne. Nawet gwiazdy zniknęły. Księga sama otwiera się na nowej stronie.",
+  L:{t:"Odpraw rytuał",e:{fv:10,sn:-8}}, R:{t:"Zamknij księgę",e:{sn:6,fv:-7}}},
+ {i:"🧨",n:"Górnik z Propozycją",t:"Stary górnik oferuje ci skrzynkę dynamitu. Nie pyta po co ci ona. Ty też lepiej nie pytaj, skąd ją ma.",
+  L:{t:"Kup",e:{cs:-5},grant:{item:"skrzyniaDynamitu",chance:1}}, R:{t:"Nie",e:{}}},
+ {i:"🐙",n:"Głębinowiec",t:"Nocą z morza wychodzi istota o mokrej, łuskowatej skórze. Mówi łamaną angielszczyzną: \"Potrzebuję... pomocy.\"",
+  L:{t:"Pomóż",e:{fv:8,cs:3},grant:{item:"luskaGlebinowca",chance:1}}, R:{t:"Przepędź",e:{sn:5,fv:-6}}},
+ {i:"👧",n:"Ten Sam Sen",t:"Mała dziewczynka opisuje sen, dokładnie taki sam, jaki śnił ci się poprzedniej nocy. Nie mogła go znać.",
+  L:{t:"Wysłuchaj",e:{fv:5,sn:-4},grant:{item:"rysunekRlyeh",chance:s=>isOrigin('oblakany')?1:0.4}}, R:{t:"Odeślij do domu",e:{sn:3,fv:-2}}},
+ {i:"🧭",n:"Kupiec z Kompasem",t:"Kupiec sprzedaje stary kompas wykonany z czegoś, co przypomina kość. Igła zawsze wskazuje morze — nawet będąc na statku.",
+  L:{t:"Kup",e:{cs:-5},grant:{item:"kompasZKosci",chance:1}}, R:{t:"Odmów",e:{}}},
+ {i:"🕳️",n:"Studnia, Której Nie Było",t:"W piwnicy świątyni pojawiła się studnia. Wczoraj jej tam nie było. Nie widać dna.",
+  L:{t:"Zejdź",e:{sn:-8,fv:10},grant:{item:"czarnaPerla",chance:s=>isOrigin('pijak')?1:0.4}}, R:{t:"Zamurować",e:{sp:4,fv:-8}}},
+ {i:"👑",n:"Fałszywy Prorok",t:"Jeden z kultystów twierdzi, że to on został wybrany przez Cthulhu. Coraz więcej osób mu wierzy.",
+  L:{t:"Pozwól przemawiać",e:{cs:8,sp:6},schedule:{key:"rozlam",inTurns:[8,14],chance:0.4}}, R:{t:"Publicznie go ukarz",e:{cs:-6,fv:4,sn:2}}},
+ {i:"🕊️",n:"Obserwujące Mewy",t:"Od tygodnia setki mew siedzą na dachach i patrzą wyłącznie na twój dom. Nie jedzą. Nie wydają żadnego dźwięku. Przez lornetkę wszystkie mają ludzkie oczy.",
+  L:{t:"Nakarm je",e:{fv:6,cs:-5},grant:{item:"pioroBialegoKruka",chance:1}},
+  R:{t:"Przepędź",e:{sn:4,sp:3},schedule:{key:"peckedWindows",inTurns:[2,4],chance:1}}},
+
+ /* --- przedmioty do wydarzeń kluczowych Aktu I --- */
+ {i:"📿",n:"Podejrzany Lombardziarz",t:"Miejscowy lombardziarz sprzedaje medalion, który wciąż jest ciepły i lekko pulsuje w rytm czyjegoś serca. Niekoniecznie twojego.",
+  L:{t:"Kup, nie pytaj o pochodzenie",e:{cs:-4},grant:{item:"krwawyMedalion",chance:1}}, R:{t:"To ewidentnie kradzione",e:{sp:3}}},
+ {i:"🗡️",n:"Skrzynia po Proboszczu",t:"W skrzyni po dawnym proboszczu znajdujesz rytualny sztylet, złamany w połowie ostrza — jakby ktoś próbował nim dźgnąć coś dużo twardszego niż człowiek.",
+  L:{t:"Zabierz go",e:{sn:-2},grant:{item:"zlamanySztylet",chance:1}}, R:{t:"Zostaw, to zły omen",e:{sn:2}}},
+ {i:"🌌",n:"Astronom-Odmieniec",t:"Wędrowny astronom sprzedaje mapę gwiazd, na której konstelacje układają się w kształty, jakich nie uczono w żadnej szkole.",
+  L:{t:"Kup mapę",e:{cs:-3},grant:{item:"gwiezdnaMapa",chance:1}}, R:{t:"To stek bzdur",e:{sn:2}}},
+ {i:"🔔",n:"Nurkowie z Wraku",t:"Lokalni nurkowie wyciągają z zatopionego statku dzwon, który dzwoni sam, gdy nikt go nie dotyka. Najgłośniej o trzeciej w nocy.",
+  L:{t:"Odkup dzwon",e:{cs:-5,fv:2},grant:{item:"dzwonZWraku",chance:1}}, R:{t:"Niech go zatrzymają, to ich problem",e:{sn:2}}},
+ {i:"🔑",n:"Spadek po Ciotce",t:"Nieznana ci daleka ciotka umiera i zapisuje ci w testamencie jeden przedmiot: mały, srebrny klucz bez opisu, do czego pasuje.",
+  L:{t:"Przyjmij spadek",e:{},grant:{item:"srebrnyKlucz",chance:1}}, R:{t:"Odmów, rodzinne sprawy to komplikacje",e:{sn:2}}},
+ {i:"👁️‍🗨️",n:"Trofeum z Połowu",t:"Rybacy wyciągają w sieci coś, co wygląda jak wyrwane z oczodołu oko, wielkości pięści, wciąż wilgotne i uparcie skierowane w twoją stronę.",
+  L:{t:"Zabierz je do świątyni",e:{sn:-4},grant:{item:"okoGlebinowca",chance:1}}, R:{t:"Wyrzuć z powrotem do morza",e:{sn:2}}},
+
+ /* --- zwykłe wydarzenia 48-53 --- */
+ {i:"✉️",n:"Anonimowy List",t:"Listonosz przyniósł list bez adresata. W środku jest tylko jedno zdanie: \"Już cię widzimy.\"",
+  L:{t:"Zachowaj",e:{fv:4,sn:-2}}, R:{t:"Spal",e:{sn:3}}},
+ {i:"💒",n:"Ślub w Kulcie",t:"Jeden z kultystów chce wziąć ślub. Problem: narzeczona nie wie, że należy do kultu.",
+  L:{t:"Pobłogosław",e:{cs:5,sp:3}}, R:{t:"Zabroń",e:{cs:-4}}},
+ {i:"🧾",n:"Inspektor Podatkowy",t:"Urząd zainteresował się finansami \"stowarzyszenia religijno-rekreacyjnego nad jeziorem\".",
+  L:{t:"Sfałszuj księgi",e:{cs:4,sp:5}}, R:{t:"Zapłać",e:{cs:-6,sp:-4}}},
+ {i:"🐸",n:"Deszcz Żab",t:"Przez godzinę z nieba spadają żaby. Mieszkańcy wpadają w panikę, część zaczyna śpiewać wasze pieśni z pamięci.",
+  L:{t:"Ogłoś cud",e:{cs:7,sp:4}}, R:{t:"Milcz",e:{sn:2}}},
+ {i:"😴",n:"Śpiący Kultysta",t:"Od tygodnia śpi. Nie da się go obudzić. Ale w czasie snu odpowiada na pytania.",
+  L:{t:"Rozmawiaj",e:{fv:8,sn:-5}}, R:{t:"Pogrzeb go",e:{cs:-5,sn:2}}},
+ {i:"🐟",n:"Zagadkowy Śledź",t:"Na biurku leży jeden śledź. Mokry. Nie pamiętasz, kto go przyniósł. Na jego boku wyryto napis: \"Jeszcze nie.\"",
+  L:{t:"Zjedz",e:{sn:-8,fv:8}}, R:{t:"Wyrzuć",e:{sn:4,fv:-4}}},
+
+ /* --- silne uderzenia w Łaskę Przedwiecznych --- */
+ {i:"🐛",n:"Plaga Robactwa",t:"Niewielkie, białe robactwo zaczyna toczyć strony księgi — akurat w miejscach, które najbardziej się liczą.",
+  L:{t:"Spal zarażone strony, zanim rozprzestrzenią się dalej",e:{fv:-20,sn:5}}, R:{t:"Próbuj ratować księgę razem z robactwem",e:{sn:-8,sp:3}}},
+ {i:"☄️",n:"Kometa w Złym Kierunku",t:"Nad jeziorem przecina niebo kometa — dokładnie w kierunku odwrotnym do tego, jaki opisuje przepowiednia.",
+  L:{t:"Uznać to za ostrzeżenie i wstrzymać wszystkie obrzędy",e:{fv:-20,sn:6}}, R:{t:"Zignorować znaki, nikt tak dokładnie nie liczy stopni na niebie",e:{fv:-6,sp:5}}},
+ {i:"🍺",n:"Zbezczeszczony Ołtarz",t:"Pijany turysta, przekonany że to publiczna toaleta, załatwia się na wasz główny ołtarz. Nie ma pojęcia, co właśnie zrobił.",
+  L:{t:"Oczyść ołtarz pełnym rytuałem naprawczym",e:{fv:-20,cs:2}}, R:{t:"Zignoruj, wytrzyj i udawaj że nic się nie stało",e:{fv:-8,sp:4}}},
+ {i:"📢",n:"Odstępca",t:"Jeden z najstarszych wyznawców wstaje w środku nabożeństwa i publicznie wyrzeka się Przedwiecznych, przeklinając ich imię przy wszystkich.",
+  L:{t:"Pozwól mu odejść w spokoju",e:{fv:-20,cs:-3}}, R:{t:"Ukarz go publicznie, dla przykładu",e:{fv:-10,sn:-4,sp:6}}},
+];
+
+CARDS.forEach((c,i)=>{ c._id = 'card'+i; });
+
+/* karta, która daje przedmiot na tej lub innej stronie — zwraca id przedmiotu albo null */
+function cardGrantItemId(card){
+  const sides = [card.L, card.R];
+  for(const ch of sides){
+    if(!ch) continue;
+    if(ch.grant && ch.grant.item) return ch.grant.item;
+    if(ch.successGrant) return ch.successGrant;
+  }
+  return null;
+}
+
+/* karty specjalne — jednorazowe, wymagają przedmiotu albo kończą grę od razu */
+const SPECIAL_CARDS = [
+ {i:"📕",n:"Zakazany Tom",t:"Pod starym ołtarzem znajdujecie księgę spisaną językiem, którego nikt tu nie powinien znać.",
+  L:{t:"Przeczytaj ją na głos, do końca",instant:"word"}, R:{t:"Spal ją, zanim ktoś skończy stronę",e:{fv:-8,sn:5}}},
+ {i:"⚔️",n:"Oblężenie Rywali",t:"Rywalizujący kult atakuje waszą świątynię w środku nocy, z pochodniami i nożami.",
+  L:{t:"Broń świątyni do ostatniej kropli krwi",instant:"bastion"}, R:{t:"Ucieknij tunelami, ratuj tylu, ilu zdążysz",e:{cs:-15,sn:-5}}},
+ {i:"👂",n:"Głos z Otchłani",t:"Słyszysz szept wprost w swojej głowie. Obiecuje moc — w zamian za jeden krok w wodę.",
+  L:{t:"Wejdź do wody",instant:"dissolved"}, R:{t:"Zignoruj szept, to może być pułapka",e:{sn:4,fv:-4}}},
+ {i:"🔪",n:"Obłąkany Człowiek",t:"W ciemnej uliczce atakuje cię obłąkany człowiek z rybackim nożem, krzycząc o \"prawdziwych bogach z głębin\".",
+  L:{t:"Pokaż mu Kamienną Figurkę",requiresItem:"figurka",consumeItem:true,e:{cs:10}}, R:{t:"Uciekaj",e:{sn:-5,fv:-5}}},
+ {i:"🚧",n:"Blokada na Drodze",t:"Policyjna blokada odcina dojazd do świątyni podczas \"rutynowej kontroli technicznej dróg\".",
+  L:{t:"Wysadź objazd Skrzynią Dynamitu",requiresItem:"skrzyniaDynamitu",consumeItem:true,e:{sp:-12,cs:-2}}, R:{t:"Zawróć i zaczekaj do rana",e:{sp:3}}},
+
+ /* --- questline 42-47 --- */
+ {i:"⚓",n:"Zaginiony Kapitan",t:"W porcie krąży legenda o kapitanie, który zszedł pod wodę i wrócił po trzydziestu latach, nie starszy o jeden dzień.",
+  L:{t:"Odnajdź wrak, korzystając z Kompasu",requiresItem:"kompasZKosci",consumeItem:true,e:{fv:8,cs:5}}, R:{t:"To bajki",e:{sn:2}}},
+ {i:"🗝️",n:"Krypta Proboszcza",t:"Klucz, który masz, pasuje idealnie do drzwi pod plebanią, o których nikt we wsi nie chce rozmawiać.",
+  L:{t:"Otwórz Kluczem do Krypty",requiresItem:"kluczKrypty",consumeItem:true,e:{fv:10,sp:-5}}, R:{t:"Zostaw, jak było",e:{}}},
+ {i:"🐣",n:"Narodziny Potomka",t:"Jajo, które przechowujesz od tygodni, zaczyna pękać wieczorem, bez żadnego ostrzeżenia.",
+  L:{t:"Pozwól się wykluć",requiresItem:"jajoZGlebin",consumeItem:true,e:{fv:15,cs:5}}, R:{t:"Zniszcz je",requiresItem:"jajoZGlebin",consumeItem:true,e:{sn:10,fv:-15}}},
+ {i:"⚫",n:"Oko w Studni",t:"Czarna Perła, którą trzymasz w kieszeni od tygodni, zaczyna świecić, gdy przechodzisz obok studni w piwnicy.",
+  L:{t:"Wrzuć Perłę do studni",requiresItem:"czarnaPerla",consumeItem:true,e:{fv:18,sn:-6}}, R:{t:"Zachowaj ją",e:{}}},
+ {i:"🔍",n:"Światło Latarni",t:"Soczewki, które nosisz przy sobie, idealnie pasują do starej latarni morskiej na klifie.",
+  L:{t:"Zamontuj Soczewki",requiresItem:"soczewkiLatarnika",consumeItem:true,e:{fv:8,sp:8}}, R:{t:"Sprzedaj je zamiast tego",requiresItem:"soczewkiLatarnika",consumeItem:true,e:{cs:5}}},
+ {i:"📑",n:"Skradzione Śledztwo",t:"Notatki Profesora, które masz, zawierają nazwiska wszystkich lokalnych badaczy niewymownego — i ich adresy domowe.",
+  L:{t:"Przeczytaj i wykorzystaj",requiresItem:"notatkiProfesora",consumeItem:true,e:{sp:-12,cs:5}}, R:{t:"Spal notatki",requiresItem:"notatkiProfesora",consumeItem:true,e:{fv:6}}},
+
+ /* --- jednorazowe artefakty, zdobywane w trakcie gry, nie na starcie --- */
+ {i:"👓",n:"Wędrowny Optyk",t:"Zawadiacki sprzedawca szkieł twierdzi, że jego towar pokazuje nie to, co jest, ale to, co będzie — pod warunkiem, że nie mrugniesz za wcześnie.",
+  L:{t:"Kup okulary, cena wydaje się zbyt niska",e:{cs:-3},grantConsumable:{id:"okularyPrawdy",chance:1}}, R:{t:"To pewnie zwykłe szkło, odmów",e:{sn:2}}},
+ {i:"⌛",n:"Zegarmistrz z Zaułka",t:"Stary zegarmistrz pokazuje ci klepsydrę z rysą na szkle. Piasek w niej płynie, twoim zdaniem, odczuwalnie w złą stronę.",
+  L:{t:"Przyjmij klepsydrę w prezencie",e:{sn:-2},grantConsumable:{id:"klepsydraCofniecia",chance:1}}, R:{t:"Podejrzanie hojny prezent, odmów",e:{sn:2}}},
+ {i:"⚓",n:"Kotwica z Nieznanego Wraku",t:"Rybacy wyciągają kotwicę bez nazwy statku. Trzymana w ręku, dziwnie uspokaja — jakby wiedziała, gdzie jest środek wszystkiego.",
+  L:{t:"Zatrzymaj kotwicę",e:{cs:-2},grantConsumable:{id:"kotwicaRownowagi",chance:1}}, R:{t:"Odrzuć do morza, skąd przyszła",e:{sn:2}}},
+ {i:"📦",n:"Handlarz Katalogów",t:"Milczący kupiec rozkłada na stole katalog bez tytułu. Każda strona pachnie innym miejscem, żadna nie pachnie tym, w którym stoisz.",
+  L:{t:"Kup katalog",e:{cs:-4,sp:2},grantConsumable:{id:"katalogRelikwii",chance:1}}, R:{t:"To zbyt drogie, odmów",e:{}}},
+ {i:"🔮",n:"Wróżka spod Mola",t:"Wróżka bez jednego oka proponuje wymianę: odda ci szklaną kulę, w której widać jutro, jeśli zostawisz jej coś dzisiejszego.",
+  L:{t:"Zgódź się na wymianę",e:{sn:-3},grantConsumable:{id:"okoNastepnejNocy",chance:1}}, R:{t:"Nie ufaj wróżkom bez oka",e:{sp:2}}},
+];
+
+/* wątki — wydarzenia planowane, uruchamiane po czasie / warunkiem */
+const FOLLOWUPS = {
+ temptationPrice:{cond:s=>s.temptationDebt>0, card:{
+   i:"🩸",n:"Cena Szeptu",t:"To, co pożyczyło ci swoje spojrzenie, wraca po odsetki. Przez chwilę wszyscy w kapliczce mają twoje oczy.",
+   L:{t:"Zapłać pamięcią",e:{sn:-10,cs:-3},addTemptation:-1}, R:{t:"Zrzuć cenę na kult",e:{cs:-10,sp:6},addTemptation:-1}}},
+ catDead:{cond:s=>s.flags.catFed && !s.flags.catGone, card:{
+   i:"💀",n:"Kot Wraca",t:"Kot, którego kiedyś dokarmiałeś, leży martwy na progu świątyni, ułożony tak starannie, jakby to był podarunek.",
+   L:{t:"Pochowaj go z honorami",e:{fv:4,sn:-3}}, R:{t:"Wyrzuć, to tylko kot",e:{sn:2,fv:-2}}}},
+ peckedWindows:{cond:null, card:{
+   i:"🪟",n:"Ślady Dziobów",t:"Wszystkie okna pokryte są setkami maleńkich śladów dziobów, układających się w powtarzający się, spiralny wzór.",
+   L:{t:"Zmyj je",e:{sn:-2}}, R:{t:"Zostaw, może to znak",e:{fv:2,sn:-2}}}},
+ arkhamReturn:{cond:s=>s.flags.arkhamEnemy, card:{
+   i:"🔦",n:"Badacz Wraca",t:"Profesor z Arkham znowu kręci się w okolicy — teraz z kompletem fotografii i miejscowym szeryfem na podsłuchu.",
+   L:{t:"Użyj przeciwko niemu jego własnych notatek",requiresItem:"notatnikDetektywa",consumeItem:true,e:{sp:-15},clearFlag:"arkhamEnemy"},
+   R:{t:"Zniszcz dowody po cichu",e:{sp:6,sn:-3},schedule:{key:"arkhamReturn",inTurns:[7,11],chance:1}}}},
+ rozlam:{cond:null, card:{
+   i:"⚔️",n:"Rozłam w Kulcie",t:"Zwolennicy fałszywego proroka odchodzą w środku nocy, zabierając ze sobą świece, żywność i połowę wiary reszty kultu.",
+   L:{t:"Pozwól im odejść w spokoju",e:{cs:-12,sn:3}}, R:{t:"Ściągnij ich siłą z powrotem",e:{cs:-4,sp:8,sn:-4}}}},
+};
+
+const CAT_GIFT_POOL = ["wyrwanaStrona","notatkiProfesora","czarnaPerla"];
+
+function catGiftCard(item){
+  return {i:"🐈‍⬛",n:"Kot Coś Przyniósł",t:"Czarny kot znowu zostawił coś pod drzwiami. Tym razem to nie palec.",
+    L:{t:"Zabierz",e:{},grant:{item:item,chance:1}}, R:{t:"Nie dotykaj tego",e:{sn:2}}};
+}
+
+/* karty fabularne — jednorazowe, jeden wybór, bez realnej decyzji.
+   Wprowadzają historię i dyskretnie naprowadzają na to, czego trzeba do Aktu I / dobrego zakończenia. */
+const LORE_CARDS = [
+ {i:"📜",n:"Strona o Kamieniu",isLore:true,
+  t:"Księga szepcze o dawnym zwyczaju: żadna świątynia nie stoi bez kamienia, który już raz widział coś, czego nie powinien. Warto rozglądać się za czymś małym, kamiennym i niepokojącym.",
+  L:{t:"Zapamiętaj",e:{}}, R:null},
+ {i:"📜",n:"Strona o Krwi i Stali",isLore:true,
+  t:"Na marginesie ktoś dawno temu dopisał: \"Pierwszy prawdziwy rytuał wymaga tego, co wciąż pulsuje, i tego, co już złamane. Jedno bez drugiego jest tylko odrobiną teatru.\"",
+  L:{t:"Zapamiętaj",e:{}}, R:null},
+ {i:"📜",n:"Strona o Gwiazdach",isLore:true,
+  t:"Fragment mówi o \"znaku z nieba i głosie z metalu\" — o czymś, co pokazuje drogę, choćby nikt jej nie szukał, i o czymś, co dzwoni, choć nikt go nie dotyka.",
+  L:{t:"Zapamiętaj",e:{}}, R:null},
+ {i:"📜",n:"Strona o Krypcie",isLore:true,
+  t:"Ktoś napisał kredą na wewnętrznej okładce: \"To, co zamurowano, otwiera się tylko srebrem. Nigdy żelazem. Nigdy złotem. Tylko srebrem.\"",
+  L:{t:"Zapamiętaj",e:{}}, R:null},
+ {i:"📜",n:"Strona o Oku",isLore:true,
+  t:"Ostatnia linijka na tej stronie, pismem drobniejszym niż resztа: \"Kiedy znajdziesz oko, które wciąż patrzy, choć nie ma już do czego wracać — przyłóż je do twarzy. Zobaczysz więcej, niż zniesiesz.\"",
+  L:{t:"Zapamiętaj",e:{}}, R:null},
+ {i:"📜",n:"Strona o Pięciu Krokach",isLore:true,
+  t:"Księga wylicza pięć rzeczy, które muszą zostać dokonane, zanim morze zdecyduje się cokolwiek oddać: fundament, krew, gwiazdy, klucz i oko. Dopiero wtedy nadejdzie noc, w którą coś odpowie.",
+  L:{t:"Zapamiętaj",e:{}}, R:null},
+ {i:"📜",n:"Strona o Właściwym Momencie",isLore:true,
+  t:"Przypis, wyblakły i trudny do odczytania: \"Zbyt wielu wyznawców bez dyscypliny to tylko hałas. Zbyt wiele podejrzeń to koniec, zanim się zacznie. Zbyt mało rozumu, a Przedwieczni usłyszą jedynie krzyk. Potrzebna jest równowaga, nie tylko wiara.\"",
+  L:{t:"Zapamiętaj",e:{}}, R:null},
+ {i:"📜",n:"Strona o Cieniach z Miasta",isLore:true,
+  t:"Ostrzeżenie zapisane drobnym pismem: \"Ci, którzy pytają za dużo, w końcu przyjeżdżają z papierami i pochodniami. Cisza jest tarczą skuteczniejszą niż jakikolwiek zamek w drzwiach.\"",
+  L:{t:"Zapamiętaj",e:{}}, R:null},
+ {i:"📜",n:"Strona o Rozumie Przywódcy",isLore:true,
+  t:"Notatka poprzedniego przywódcy, pismo drżące i coraz mniej czytelne: \"Moc, którą dają, zabiera po kawałku to, czym jesteś. Zachowaj coś dla siebie, albo nie będzie komu dokończyć dzieła.\"",
+  L:{t:"Zapamiętaj",e:{}}, R:null},
+ {i:"📜",n:"Historia Poprzedniego Kultu",isLore:true,
+  t:"Na spleśniałej pierwszej stronie księgi widnieje inne nazwisko, przekreślone trzy razy. Kult istniał już wcześniej, w tym samym miejscu, sto lat temu. Nikt nie wie, co się z nim stało — księga po prostu zmieniła właściciela.",
+  L:{t:"Zapamiętaj",e:{}}, R:null},
+];
+
+/* ============ WYDARZENIA KLUCZOWE — AKT I ============ */
+
+const KEY_EVENTS = [
+ {key:"fund", isKeyEvent:true,
+  cond:s=> s.act===1 && !s.keyDone.fund && s.turn>=4 && s.inventory.figurka && (!s.keyPostpone.fund || s.turn>=s.keyPostpone.fund),
+  card:{i:"⛩️",n:"Fundament Świątyni",isKeyEvent:true,
+   t:"Księga zapisuje nowy rozdział: \"Nie wznoś świątyni dla ludzi. Wznieś ją dla Tych, Którzy Śnią.\" Do rytuału potrzebna jest Kamienna Figurka.",
+   L:{t:"Rozpocznij budowę",requiresItem:"figurka",consumeItem:true,e:{cs:15,fv:10,sp:5},completeKey:"fund"},
+   R:{t:"Jeszcze nie",e:{},postponeKey:"fund",postpone:4}}},
+ {key:"krewMorza", isKeyEvent:true,
+  cond:s=> s.act===1 && s.keyDone.fund && !s.keyDone.krewMorza && s.inventory.krwawyMedalion && s.inventory.zlamanySztylet && (!s.keyPostpone.krewMorza || s.turn>=s.keyPostpone.krewMorza),
+  card:{i:"🩸",n:"Krew Morza",isKeyEvent:true,
+   t:"W księdze pojawia się przepis na pierwszy prawdziwy rytuał. Potrzebujesz Krwawego Medalionu i Złamanego Rytualnego Sztyletu.",
+   L:{t:"Rozpocznij rytuał",requiresItems:["krwawyMedalion","zlamanySztylet"],consumeItems:true,e:{fv:20,sn:-10},completeKey:"krewMorza",setFlag:"deepOnesVisit"},
+   R:{t:"Odrzuć",e:{fv:-10},postponeKey:"krewMorza",postpone:4}}},
+ {key:"gwiazdy", isKeyEvent:true,
+  cond:s=> s.act===1 && s.keyDone.fund && !s.keyDone.gwiazdy && s.inventory.gwiezdnaMapa && s.inventory.dzwonZWraku && (!s.keyPostpone.gwiazdy || s.turn>=s.keyPostpone.gwiazdy),
+  card:{i:"✨",n:"Gwiazdy Są Właściwe",isKeyEvent:true,
+   t:"Księga otwiera stronę pełną gwiazd. Potrzebujesz Gwiezdnej Mapy i Dzwonu z Wraku.",
+   L:{t:"Odczytaj",requiresItems:["gwiezdnaMapa","dzwonZWraku"],consumeItems:true,e:{fv:15,cs:5},completeKey:"gwiazdy"},
+   R:{t:"Zamknij",e:{fv:-8},postponeKey:"gwiazdy",postpone:4}}},
+ {key:"krypta", isKeyEvent:true,
+  cond:s=> s.act===1 && s.keyDone.fund && !s.keyDone.krypta && s.inventory.srebrnyKlucz && (!s.keyPostpone.krypta || s.turn>=s.keyPostpone.krypta),
+  card:{i:"⚰️",n:"Otwarcie Krypty",isKeyEvent:true,
+   t:"Pod kościołem znajdujesz kamienne drzwi. Potrzebujesz Srebrnego Klucza.",
+   L:{t:"Otwórz",requiresItem:"srebrnyKlucz",consumeItem:true,e:{fv:10,sn:-8},completeKey:"krypta"},
+   R:{t:"Odejdź",e:{sn:2},postponeKey:"krypta",postpone:4}}},
+ {key:"oko", isKeyEvent:true,
+  cond:s=> s.act===1 && s.keyDone.fund && !s.keyDone.oko && s.inventory.okoGlebinowca && (!s.keyPostpone.oko || s.turn>=s.keyPostpone.oko),
+  card:{i:"👁️",n:"Oko Patrzy",isKeyEvent:true,
+   t:"Oko Głębinowca zaczyna mrugać. Słyszysz wołanie z oceanu.",
+   L:{t:"Przyłóż do twarzy",requiresItem:"okoGlebinowca",consumeItem:true,e:{fv:20,sn:-15},completeKey:"oko"},
+   R:{t:"Schowaj",e:{},postponeKey:"oko",postpone:4}}},
+ {key:"lowcyZachodu", isKeyEvent:true,
+  cond:s=> s.sp>=55 && s.turn>=6 && (!s.keyPostpone.lowcyZachodu || s.turn>=s.keyPostpone.lowcyZachodu),
+  card:{i:"🏹",n:"Łowcy z Zachodu",isKeyEvent:true,
+   t:"Do miasteczka przyjeżdża trójka \"handlarzy futer\", które nigdy nie sprzedali ani jednego futra. Pytają w barze wyłącznie o wasz kult — i o to, gdzie najlepiej rozstawić sidła.",
+   L:{t:"Zwabić ich w pułapkę pod świątynią",e:{sp:-15,sn:-5},postponeKey:"lowcyZachodu",postpone:10},
+   R:{t:"Zawiesić działalność na kilka tygodni",e:{sp:-10,cs:-8},postponeKey:"lowcyZachodu",postpone:10}}},
+ {key:"miskatonic", isKeyEvent:true,
+  cond:s=> s.sp>=72 && (!s.keyPostpone.miskatonic || s.turn>=s.keyPostpone.miskatonic),
+  card:{i:"🔬",n:"Ekspedycja z Miskatonic",isKeyEvent:true,
+   t:"Formalna ekspedycja naukowa rozstawia namioty tuż za wsią, z pełnym sprzętem, teodolitem i listem polecającym od uniwersytetu. To już nie jeden ciekawski profesor.",
+   L:{t:"Skorumpuj kierownika ekspedycji",e:{sp:-18,cs:-5},postponeKey:"miskatonic",postpone:12},
+   R:{t:"Sabotuj sprzęt pod osłoną nocy",e:{sp:-12,sn:-6},postponeKey:"miskatonic",postpone:12}}},
+ {key:"glosy", isKeyEvent:true,
+  cond:s=> s.sn<=45 && (!s.keyPostpone.glosy || s.turn>=s.keyPostpone.glosy),
+  card:{i:"👂",n:"Głosy Spod Wody",isKeyEvent:true,
+   t:"Ostatnio słyszysz szepty, których nie ma w żadnej księdze. Dochodzą spod podłogi, z kranu, czasem z wnętrza własnej czaszki. Nie jesteś już pewien, które modlitwy są twoje.",
+   L:{t:"Zagłusz je głośniejszą modlitwą",e:{sn:-6,fv:8},postponeKey:"glosy",postpone:8},
+   R:{t:"Spróbuj się skupić na czymś zwyczajnym",e:{sn:8,fv:-4},postponeKey:"glosy",postpone:8}}},
+ {key:"znajomy", isKeyEvent:true,
+  cond:s=> s.sn<=32 && (!s.keyPostpone.znajomy || s.turn>=s.keyPostpone.znajomy),
+  card:{i:"🤝",n:"Ktoś, Kto Cię Znał Wcześniej",isKeyEvent:true,
+   t:"Dawny znajomy odnajduje cię po latach. Patrzy na twoje podkrążone oczy i drżące ręce i mówi tylko: \"powinieneś stąd wyjechać, zanim będzie za późno\".",
+   L:{t:"Wyśmiej jego obawy",e:{sn:-8,cs:2},postponeKey:"znajomy",postpone:10},
+   R:{t:"Pozwól sobie na chwilę szczerości",e:{sn:12,fv:-6,cs:-3},postponeKey:"znajomy",postpone:10}}},
+ {key:"wezwanie", isKeyEvent:true,
+  cond:s=> s.act===1 && s.keyDone.fund && s.keyDone.krewMorza && s.keyDone.gwiazdy && s.keyDone.krypta && s.keyDone.oko,
+  card:{i:"🌊",n:"Wezwanie z Głębin",isKeyEvent:true,isFinaleAct1:true,
+   t:"Morze cofnęło się o kilometr. Na piasku czeka coś ogromnego. Akt I dobiega końca.",
+   L:{t:"Patrz dalej..."}, R:null}},
+];
+
+function checkKeyEvents(){
+  for(const ke of KEY_EVENTS){ if(ke.cond(state)) return ke.card; }
+  return null;
+}
+
+/* ============ QUESTLINE'Y ALTERNATYWNYCH PRZEDWIECZNYCH ============ */
+
+const QUESTLINES = {
+ hastur:{turnStart:8, gap:[9,14]},
+ yog:{turnStart:14, gap:[9,14]},
+ shub:{turnStart:10, gap:[9,14]},
+ ciesla:{turnStart:6, gap:[8,12]},
+ nyar:{turnStart:18, gap:[9,14]},
+};
+
+function qlReady(key){ const q = state.ql[key]; return q && !q.ended && state.turn>=(q.readyAt||0); }
+function advanceQuestline(key){
+  const q = state.ql[key];
+  q.stage++;
+  const g = QUESTLINES[key].gap;
+  q.readyAt = state.turn + g[0] + Math.floor(Math.random()*(g[1]-g[0]+1));
+}
+function endQuestline(key){ state.ql[key].ended = true; }
+function otherQuestlineActive(excludeKey){
+  return Object.keys(state.ql).some(k=>k!==excludeKey && state.ql[k].stage>0 && !state.ql[k].ended);
+}
+function updateQuestlineGates(){
+  if(state.ql.hastur.stage===3 && state.sn<40) state.ql.hastur.gateMet = true;
+  if(state.ql.yog.stage===3 && state.sn<30) state.ql.yog.gateMet = true;
+  if(state.ql.shub.stage===3 && state.cs>=100) state.ql.shub.gateMet = true;
+  if(state.ql.ciesla.stage===3 && state.sn>80) state.ql.ciesla.gateMet = true;
+}
+
+const QUESTLINE_EVENTS = [
+ // --- HASTUR: "Obłąkany Starzec" ---
+ {cond:s=>qlReady('hastur') && s.ql.hastur.stage===0 && s.turn>=QUESTLINES.hastur.turnStart && !otherQuestlineActive('hastur'),
+  card:{i:"🎭",n:"Obłąkany Starzec",isKeyEvent:true,
+   t:"Pewnej nocy do świątyni przychodzi obdarty starzec. Nie puka. Po prostu siedzi w środku. — Dwadzieścia istnień za jedno przedstawienie — mówi, nie patrząc na ciebie.",
+   L:{t:"Poświęć dwudziestu kultystów",e:{cs:-20,fv:10},qlAdvance:"hastur"},
+   R:{t:"Odmów",e:{cs:5},qlEnd:"hastur"}}},
+ {cond:s=>qlReady('hastur') && s.ql.hastur.stage===1,
+  card:{i:"🔥",n:"Starzec i Beczka Smoły",isKeyEvent:true,
+   t:"Starzec przynosi beczkę smoły pod bramę świątyni. — Każde przedstawienie potrzebuje światła — mówi, uśmiechając się do czegoś, czego nie widzisz.",
+   L:{t:"Spalić kościół w miasteczku",e:{sp:25,fv:15},qlAdvance:"hastur"},
+   R:{t:"Nie",e:{cs:5},qlEnd:"hastur"}}},
+ {cond:s=>qlReady('hastur') && s.ql.hastur.stage===2,
+  card:{i:"🎭",n:"Oczyszczenie",isKeyEvent:true,
+   t:"— Nie potrzebujesz pamiątek — mówi starzec, przesuwając wzrokiem po twoich relikwiach. — Potrzebujesz tylko roli.",
+   L:{t:"Wyrzuć wszystkie zebrane relikwie",e:{fv:20},clearInventory:true,qlAdvance:"hastur"},
+   R:{t:"Zachowaj",e:{},qlEnd:"hastur"}}},
+ {cond:s=>qlReady('hastur') && s.ql.hastur.stage===3 && (s.sn<40 || s.ql.hastur.gateMet),
+  card:{i:"🎭",n:"Zmiana Scenerii",isKeyEvent:true,
+   t:"Starzec pierwszy raz się uśmiecha, szczerze i bardzo długo. — Czas zmienić scenę — mówi.",
+   L:{t:"Spalić świątynię",e:{fv:-50,sn:20},grantConsumable:{id:"dziwnaMaska",chance:1},qlAdvance:"hastur"},
+   R:{t:"Nie",e:{fv:10},qlEnd:"hastur"}}},
+
+ // --- YOG-SOTHOTH: "Człowiek Bez Drzwi" ---
+ {cond:s=>qlReady('yog') && s.ql.yog.stage===0 && s.turn>=QUESTLINES.yog.turnStart && !otherQuestlineActive('yog'),
+  card:{i:"🚪",n:"Człowiek Bez Drzwi",isKeyEvent:true,
+   t:"Do miasta przybywa elegancki mężczyzna. Nigdy nie otwiera drzwi — zawsze pojawia się już w środku pomieszczenia. — Czy chciałbyś wiedzieć, co wydarzy się jutro? — pyta, siadając tam, gdzie chwilę wcześniej nikogo nie było.",
+   L:{t:"Tak",e:{sn:-10,fv:15},qlAdvance:"yog"},
+   R:{t:"Nie",e:{fv:5},qlEnd:"yog"}}},
+ {cond:s=>qlReady('yog') && s.ql.yog.stage===1 && Object.keys(s.inventory).length>0,
+  card:{i:"🚪",n:"Cena Przyszłości",isKeyEvent:true,
+   t:"— Przyszłość wymaga zapłaty — mówi mężczyzna, wyciągając rękę. — Oddaj jedną relikwię.",
+   L:{t:"Oddaj artefakt",e:{fv:15},removeRandomItem:true,qlAdvance:"yog"},
+   R:{t:"Nie",e:{},qlEnd:"yog"}}},
+ {cond:s=>qlReady('yog') && s.ql.yog.stage===2,
+  card:{i:"🚪",n:"Zamykające się Drzwi",isKeyEvent:true,
+   t:"— Każda wiedza zamyka inne drzwi — mówi mężczyzna, a jego głos dochodzi teraz z każdego kąta pomieszczenia naraz.",
+   L:{t:"Zapomnij",e:{sn:20},removeRandomDeckCard:true,qlAdvance:"yog"},
+   R:{t:"Zachowaj wspomnienia",e:{},qlEnd:"yog"}}},
+ {cond:s=>qlReady('yog') && s.ql.yog.stage===3 && (s.sn<30 || s.ql.yog.gateMet),
+  card:{i:"🚪",n:"Ostatnie Drzwi",isKeyEvent:true,
+   t:"— Otwórz ostatnie drzwi — mówi mężczyzna. Za jego plecami nie ma już ściany. Jest tylko czerń usiana punktami, które mogą być gwiazdami albo oczami.",
+   L:{t:"Wejdź",triggerAltFinale:"yog"},
+   R:{t:"Nie",e:{},qlEnd:"yog"}}},
+
+ // --- SHUB-NIGGURATH: "Akuszerka" ---
+ {cond:s=>qlReady('shub') && s.ql.shub.stage===0 && s.turn>=QUESTLINES.shub.turnStart && !otherQuestlineActive('shub'),
+  card:{i:"🐐",n:"Akuszerka",isKeyEvent:true,
+   t:"Starsza kobieta pojawia się w mieście. Twierdzi, że była położną ponad dwustu dzieci. Nikt we wsi nie pamięta jej twarzy, choć wszyscy przysięgają, że ją znają. — Wszystko powinno się rozmnażać — mówi na powitanie.",
+   L:{t:"Zgoda",e:{cs:15},qlAdvance:"shub"},
+   R:{t:"Nie",e:{sp:-5},qlEnd:"shub"}}},
+ {cond:s=>qlReady('shub') && s.ql.shub.stage===1,
+  card:{i:"🌱",n:"Dziwne Nasiona",isKeyEvent:true,
+   t:"Akuszerka przynosi garść nasion, które poruszają się we własnym rytmie, niezależnym od twojej dłoni.",
+   L:{t:"Zasiej",e:{cs:-5,fv:20},qlAdvance:"shub"},
+   R:{t:"Spal",e:{},qlEnd:"shub"}}},
+ {cond:s=>qlReady('shub') && s.ql.shub.stage===2,
+  card:{i:"🐐",n:"Poród",isKeyEvent:true,
+   t:"W nocy rodzą się... kozy. Z ludzkimi twarzami. Wszystkie mają twarz kogoś, kogo znałeś.",
+   L:{t:"Zachowaj",e:{fv:15,sn:-10},qlAdvance:"shub"},
+   R:{t:"Zabij",e:{},qlEnd:"shub"}}},
+ {cond:s=>qlReady('shub') && s.ql.shub.stage===3 && (s.cs>=100 || s.ql.shub.gateMet),
+  card:{i:"🐐",n:"Czas Rodzić",isKeyEvent:true,
+   t:"Kult osiąga sto istnień. Akuszerka rozkłada ramiona nad jeziorem. — Czas rodzić — mówi.",
+   L:{t:"Pozwól",triggerAltFinale:"shub"}, R:null}},
+
+ // --- WĘDROWNY CIEŚLA ---
+ {cond:s=>qlReady('ciesla') && s.ql.ciesla.stage===0 && s.turn>=QUESTLINES.ciesla.turnStart && !otherQuestlineActive('ciesla'),
+  card:{i:"🔨",n:"Wędrowny Cieśla",isKeyEvent:true,
+   t:"Do miasta przychodzi ubogi cieśla. Naprawia ludziom dachy. Nigdy nie bierze pieniędzy. Nigdy nie mówi o bogach. — Wyglądasz na zmęczonego — mówi. — Pomogę ci.",
+   L:{t:"Pozwól mu pomóc",e:{sn:10},qlAdvance:"ciesla"},
+   R:{t:"Odejdź",e:{},qlEnd:"ciesla"}}},
+ {cond:s=>qlReady('ciesla') && s.ql.ciesla.stage===1,
+  card:{i:"🍞",n:"Cieśla Rozdaje Jedzenie",isKeyEvent:true,
+   t:"Cieśla rozdaje jedzenie biednym z miasteczka, nie pytając, kto należy do twojego kultu, a kto nie.",
+   L:{t:"Pomóż mu",e:{cs:-15,fv:-10,sn:-10},qlAdvance:"ciesla"},
+   R:{t:"Nie",e:{},qlEnd:"ciesla"}}},
+ {cond:s=>qlReady('ciesla') && s.ql.ciesla.stage===2,
+  card:{i:"🔨",n:"Wybaczenie",isKeyEvent:true,
+   t:"— Nie odpowiadaj przemocą — mówi cieśla. — Wybacz człowiekowi, który cię zdradził.",
+   L:{t:"Wybacz",e:{sp:-15,sn:15},qlAdvance:"ciesla"},
+   R:{t:"Zabij go",e:{},qlEnd:"ciesla"}}},
+ {cond:s=>qlReady('ciesla') && s.ql.ciesla.stage===3 && (s.sn>80 || s.ql.ciesla.gateMet),
+  card:{i:"📖",n:"Ostatnia Rozmowa z Cieślą",isKeyEvent:true,
+   t:"Cieśla mówi cicho: — Nie potrzebujesz tej księgi.",
+   L:{t:"Spal ją",instant:"cieslaSaved"},
+   R:{t:"Nie",e:{},qlEnd:"ciesla"}}},
+
+ // --- NYARLATHOTEP: "Wesoły Kuglarz" ---
+ {cond:s=>qlReady('nyar') && s.ql.nyar.stage===0 && s.turn>=QUESTLINES.nyar.turnStart && !otherQuestlineActive('nyar'),
+  card:{i:"🎻",n:"Wesoły Kuglarz",isKeyEvent:true,
+   t:"Kuglarz pojawia się na rynku. Rozśmiesza dzieci. Gra na skrzypcach. Wszyscy go lubią. Nigdy się nie starzeje, choć bawi tu ludzi od pokoleń. — Chcesz zobaczyć sztuczkę? — pyta, mrugając jednym z, wydaje się, więcej niż dwóch oczu.",
+   L:{t:"Tak",e:{fv:10},qlAdvance:"nyar"},
+   R:{t:"Nie",e:{sp:-5},qlEnd:"nyar"}}},
+ {cond:s=>qlReady('nyar') && s.ql.nyar.stage===1,
+  card:{i:"🎻",n:"Prośba Kuglarza",isKeyEvent:true,
+   t:"Kuglarz prosi o jednego członka kultu, na jedną noc. — Oddam go jutro — obiecuje, wciąż z tym samym uśmiechem.",
+   L:{t:"Zgoda",e:{cs:-1,fv:10},qlAdvance:"nyar"},
+   R:{t:"Nie",e:{},qlEnd:"nyar"}}},
+ {cond:s=>qlReady('nyar') && s.ql.nyar.stage===2,
+  card:{i:"🎻",n:"Powrót z Rynku",isKeyEvent:true,
+   t:"Nazajutrz kultysta wraca. Ma dwie głowy. Obie są szczęśliwe. Obie mówią twoim głosem, kiedy się przywitują.",
+   L:{t:"Przyjmij go z powrotem",e:{cs:20,sn:-15},qlAdvance:"nyar"},
+   R:{t:"Zabij go",e:{},qlEnd:"nyar"}}},
+ {cond:s=>qlReady('nyar') && s.ql.nyar.stage===3,
+  card:{i:"🎻",n:"Prawdziwa Sztuczka",isKeyEvent:true,
+   t:"Kuglarz odkłada skrzypce. — Teraz pokażę ci prawdziwą sztuczkę — mówi, a jego uśmiech po raz pierwszy wydaje się nie mieć nic wspólnego z radością.",
+   L:{t:"Zgódź się",triggerAltFinale:"nyar"}, R:null}},
+];
+
+function checkQuestlineEvents(){
+  for(const q of QUESTLINE_EVENTS){ if(q.cond(state)) return q.card; }
+  return null;
+}
+
+const ALT_FINALES = {
+ hastur:{ card:{i:"🎭",n:"Teatr Się Rozpoczyna",isAltFinale:"hastur",
+   t:"Nakładasz Dziwną Maskę. Świat wokół ciebie traci ostrość, jak dekoracja teatralna zwijana między aktami. Gdzieś w oddali zaczyna grać orkiestra, której nikt nie widzi.",
+   L:{t:"Zajmij swoje miejsce na scenie"}, R:null},
+   resolve:s=> s.fv>=50 ? 'hasturKing' : 'hasturMadness' },
+ yog:{ card:{i:"🚪",n:"Za Ostatnimi Drzwiami",isAltFinale:"yog",
+   t:"Przechodzisz przez drzwi, które nie miały być drzwiami. Za nimi nie ma pomieszczenia — jest wszystko naraz, przeszłość i przyszłość ułożone jak karty rozrzucone na jednym stole.",
+   L:{t:"Zrozum"}, R:null},
+   resolve:s=> s.sn<=15 ? 'yogUnmade' : 'yogBeyondGates' },
+ shub:{ card:{i:"🐐",n:"Czas Rodzić",isAltFinale:"shub",
+   t:"Sto istnień zaczyna krzyczeć naraz, w tobie i poza tobą. Ziemia pod świątynią pęka jak łono, które zbyt długo czekało.",
+   L:{t:"Pozwól Matce Działać"}, R:null},
+   resolve:s=> s.fv>=50 ? 'shubHarvest' : 'shubDevoured' },
+ nyar:{ card:{i:"🎻",n:"Prawdziwa Sztuczka",isAltFinale:"nyar",
+   t:"Kuglarz przestaje grać. Uśmiecha się i po raz pierwszy widzisz, że ten uśmiech nigdy nie miał nic wspólnego z radością.",
+   L:{t:"Zobacz sztuczkę"}, R:null},
+   resolve:s=> s.sp>=60 ? 'nyarExposed' : 'nyarChaos' },
+};
+
+/* ============ ZAKOŃCZENIA ============ */
+
+const ENDINGS = {
+ cs0:{title:"Kult się rozpadł", good:false,
+   text:"Ostatni wyznawca zamyka za sobą bramę kapliczki, zabierając ze sobą jedyny ogrzewacz i całą sól. Zostajesz sam z ołtarzem, świecami i ciszą, która nigdy wcześniej nie była tak głośna. R'lyeh może spać dalej — nikt już go nie obudzi w twoim imieniu."},
+ sp100:{title:"Nalot Badaczy", good:false,
+   text:"Agenci Instytutu przybywają o świcie, z nakazami, pochodniami i formularzem w trzech egzemplarzach. Twoje imię trafia do akt jako \"lider niebezpiecznej sekty rybnej\". Księgi płoną szybciej niż zdążyłeś je schować."},
+ sn0:{title:"Otchłań w Głowie", good:false,
+   text:"Granica między twoimi snami i jawą rozpływa się jak mokry atrament. Wyznawcy znajdują cię rano w kapliczce, rozmawiającego z kimś, kogo nie widzą — i przytakującego mu z entuzjazmem. Nigdy już nie wrócisz do tego, co było przed."},
+ fv0:{title:"Przedwieczni Odwracają Wzrok", good:false,
+   text:"Modlitwy, które wysyłałeś w ciemność, przestają mieć jakiekolwiek echo. Twój kult trwa, ale bez sensu, bez znaku, bez odpowiedzi. Budujesz świątynię dla bogów, którzy dawno przestali słuchać — i, jak się okazuje, mieli w tym rację."},
+ cs100:{title:"Twarz Nowego Kultu", good:false,
+   text:"Kult rozrósł się bardziej, niż zdołałeś unieść. Nowi wyznawcy nie znają cię z imienia — znają tylko twoje nauki, które teraz głosi ktoś młodszy, głośniejszy i ma o wiele lepsze relacje z prasą. Odchodzisz w cień własnego dzieła, z pamiątkową świecą na drogę."},
+ sp0:{title:"Zapomniani przez Świat", good:false,
+   text:"Nikt was nie podejrzewa, bo nikt o was nie wie. Żadnych gazet, żadnych plotek, żadnych badaczy. Tylko wy, jezioro i cisza — dopóki nie zorientujesz się, że dyskrecja i całkowite nieistnienie to w praktyce to samo."},
+ sn100:{title:"Przebudzenie", good:true,
+   text:"Pewnego ranka budzisz się i po raz pierwszy od lat widzisz kapliczkę tak, jak jest — spleśniałą, śmieszną, pełną ludzi wierzących w coś, czego nikt nigdy nie widział na własne oczy. Zdejmujesz szatę, pakujesz torbę i wychodzisz przez bramę, zdrowszy na umyśle niż kiedykolwiek. Gdzieś w piwnicy zostaje księga otwarta na nowej stronie. To już nie twój problem."},
+ fv100:{title:"Pierwsza Ofiara", good:false,
+   text:"Łaska, o którą tak długo prosiłeś, w końcu przychodzi — pełna, natychmiastowa, bez rytuału, bez zapowiedzi. Przedwieczni nie czekają na zaproszenie do własnego domu. Jesteś pierwszym, kto się przekonuje, że mieli już wszystko, czego potrzebowali. Łącznie z tobą."},
+ word:{title:"Słowo, Które Nie Powinno Paść", good:false,
+   text:"Ostatnia sylaba wychodzi z twoich ust i powietrze w kapliczce robi się gęste jak woda. Świece gasną jedna po drugiej. Rano wyznawcy znajdą tylko twoje ubranie, ułożone starannie na podłodze, i księgę otwartą na czystej stronie — jakby czekała na kolejnego czytelnika."},
+ bastion:{title:"Ostatni Bastion", good:false,
+   text:"Walczycie do końca, plecami do ołtarza, wśród płonących chorągwi rywali. Ginie każdy z was — ale ginie broniąc czegoś, w co naprawdę wierzył, co w tym miasteczku jest już całkiem niezłym wynikiem."},
+ dissolved:{title:"Zatopiony", good:true,
+   text:"Woda jest cieplejsza, niż powinna być o tej porze roku. Wchodzisz coraz głębiej, aż przestaje być potrzebne oddychanie. Wyznawcy nazwą to później twoim wstąpieniem. Nikt już nie zapyta, gdzie jest ich przywódca — bo w pewnym sensie jest teraz wszędzie w tym jeziorze, łącznie w cebrze na ryby."},
+ trueWin:{title:"Powrót R'lyeh", good:true,
+   text:"Woda w jeziorze wzbiera bez wiatru. Kamienne wieże, dotąd niewidzialne, przełamują powierzchnię jedna po drugiej. Twoi wyznawcy śpiewają, płacząc z ulgi i przerażenia naraz. Zrobiłeś to. Świat, który znałeś, ma już tylko kilka godzin — a ty masz najlepsze miejsce w pierwszym rzędzie."},
+ raided:{title:"Przerwany Rytuał", good:false,
+   text:"W chwili, gdy ostatnie słowa mają opuścić twoje gardło, reflektory wojskowych łodzi zalewają brzeg jeziora. Ktoś zdążył was zgłosić na czas. Rytuał kończy się w kajdankach, nie w apokalipsie — miasteczkowa gazeta i tak nazwie to \"wydarzeniem roku\"."},
+ falseProphet:{title:"Fałszywy Prorok", good:false,
+   text:"Wykonujesz każdy gest, wypowiadasz każde słowo — a jezioro pozostaje płaskie i ciche jak zwykły staw. Może zawsze było ciche. Może to wszystko było tylko echem twojego własnego, poszarpanego umysłu, który bardzo, bardzo chciał w coś wierzyć."},
+ noResponse:{title:"Cisza z Głębin", good:false,
+   text:"Rytuał zostaje odprawiony bez jednego błędu, ku uciesze wszystkich obecnych. Nic się nie dzieje. Stoicie nad brzegiem jeziora, czekając na znak, który nigdy nie przychodzi — bo łaska, o którą nigdy nie zabiegałeś wystarczająco, po prostu nie wystarczy."},
+ tooFew:{title:"Krąg Niedopełniony", good:false,
+   text:"Rytuał wymaga rąk, których po prostu nie macie. W ostatniej chwili, by krąg się zamknął, sam zajmujesz miejsce, które powinien zajmować setny wyznawca. To, co przyzywasz, dostaje pierwszą ofiarę, zanim dostanie cokolwiek innego."},
+ incomplete:{title:"Rytuał Niedokończony", good:false,
+   text:"Coś poruszyło się w głębinach — na chwilę, niepewnie, jakby przez sen. A potem znów zapada cisza. Byliście blisko. Może następny przywódca kultu dokończy to, czego wy nie zdążyliście — jeśli w ogóle się znajdzie, biorąc pod uwagę wasze CV."},
+
+ hasturKing:{title:"Król w Żółci", good:true,
+   text:"Maska nie schodzi, bo nigdy naprawdę nie była maską. Grasz rolę tak długo, że przestajesz pamiętać, gdzie się zaczynała twoja twarz. Nad Carcosą wschodzą dwa czarne słońca, a widownia bije brawo w ciszy, która brzmi jak oddech. Król w Żółci nigdy nie potrzebował twojej zgody."},
+ hasturMadness:{title:"Rola Bez Aktora", good:false,
+   text:"Zakładasz maskę, czekając na oklaski, na scenę, na Króla. Nic z tego nie przychodzi. Zostajesz sam, w kostiumie, powtarzając kwestie ze spektaklu, którego nikt nigdy nie wystawił. Miasteczko znajduje cię tygodnie później, wciąż w roli, wciąż czekającego na wejście."},
+
+ yogBeyondGates:{title:"Poza Bramami Czasu", good:true,
+   text:"Przechodzisz i przestajesz być jednym momentem. Jesteś dzieckiem uczącym się chodzić i starcem umierającym w tym samym oddechu, patrzącym na siebie z każdej strony naraz. To nie jest już strach. To jest po prostu geometria, którą wreszcie rozumiesz."},
+ yogUnmade:{title:"Rozłożony na Strony", good:false,
+   text:"Umysł, który miał zrozumieć wszystkie chwile naraz, okazuje się zbyt mały, by utrzymać nawet dwie. Rozpada się na fragmenty rozsiane po własnej biografii. Ludzie, którzy cię znajdą, będą rozmawiać z innym tobą co kilka minut — i żaden z nich nie dokończy zdania."},
+
+ shubHarvest:{title:"Żniwa Matki", good:true,
+   text:"To, co wyrasta z rozłamanej ziemi, nie przypomina niczego, co znałeś — i mnoży się szybciej, niż ktokolwiek zdąży to nazwać. Wioska nie zostaje zniszczona. Zostaje zapłodniona. Za rok nikt już nie pamięta, że kiedyś wyglądała inaczej, ani że kiedyś było tu mniej ust do wykarmienia."},
+ shubDevoured:{title:"Pokarm dla Matki", good:false,
+   text:"Płodność, o którą prosiłeś, nie pyta, czyim kosztem się rozrasta. Zaczyna od nasion, kończy na tobie — jednym z wielu składników, których nikt już nie policzy. Akuszerka nie odwraca się, kiedy to się dzieje. Nie musi. Wszystko, co się rodzi, i tak dostaje pierwszy posiłek."},
+
+ nyarExposed:{title:"Rozpoznany Żart", good:false,
+   text:"W ostatniej chwili ktoś w tłumie zaczyna się śmiać z niewłaściwego powodu, we właściwym momencie. Sztuczka się nie kończy — po prostu przestaje działać. Kuglarz kłania się, jakby to i tak było częścią planu, i znika w tłumie, który już zapomina, że tu był. Ty zostajesz z resztą rachunku."},
+ nyarChaos:{title:"Prawdziwa Sztuczka", good:false,
+   text:"Sztuczka polegała na tobie od samego początku — na każdym wyborze, który wydawał się twój. Świat nie kończy się hukiem. Zsuwa się po cichu w chaos, który nikt nie zauważy, bo Kuglarz zdążył już nauczyć wszystkich śmiać się w złych momentach. Ty jesteś teraz częścią numeru na bis."},
+
+ cieslaSaved:{title:"Świat Zostaje Uratowany?", good:true,
+   text:"Księga płonie łatwiej, niż się spodziewałeś — jak coś, co od dawna chciało zgasnąć. Cieśla nie mówi już nic. Odchodzi tą samą drogą, którą przyszedł, a za nim, daleko na wzgórzu, stoją trzy puste krzyże i grób, który — jak później będą mówić ludzie z miasteczka — otwarto od wewnątrz. Nikt nie liczył, ale mówi się, że miał dwunastu towarzyszy.\n\nCzy naprawdę?"},
+};
+
+/* ============ STAN GRY ============ */
+
+let state, deck, specialsPool, lorePool, currentCard, stateHistory = [], suppressHistory = false;
+
+const CARD_COOLDOWN_MIN = 7;
+const CARD_COOLDOWN_MAX = 13;
+
+function resetState(){
+  const origin = ORIGINS[selectedOrigin] || ORIGINS.latarnik;
+  state = {cs:origin.stats.cs, sp:origin.stats.sp, sn:origin.stats.sn, fv:origin.stats.fv, turn:0, act:1, inventory:{}, flags:{},
+    origin:selectedOrigin, sites:{}, ritualPrep:{piesn:0,krag:0,ofiara:0}, relicCooldowns:{}, extraCooldowns:{}, temptationDebt:0, choiceMemory:{},
+    consumables:{}, revealUntil:0, peekCard:null, altPath:null, pendingAltFinale:null,
+    ql:{hastur:{stage:0,ended:false,readyAt:0,gateMet:false}, yog:{stage:0,ended:false,readyAt:0,gateMet:false}, shub:{stage:0,ended:false,readyAt:0,gateMet:false},
+        ciesla:{stage:0,ended:false,readyAt:0,gateMet:false}, nyar:{stage:0,ended:false,readyAt:0,gateMet:false}},
+    scheduled:[], keyDone:{}, keyPostpone:{}, finaleTurn:null, cooldowns:{}};
+  const starterPool = ['okularyPrawdy','klepsydraCofniecia','kotwicaRownowagi','katalogRelikwii','okoNastepnejNocy'];
+  const starter = starterPool[Math.floor(Math.random()*starterPool.length)];
+  state.consumables[starter] = 1;
+  deck = CARDS.slice();
+  specialsPool = SPECIAL_CARDS.slice();
+  lorePool = LORE_CARDS.slice();
+  stateHistory = [];
+}
+
+function clamp(v){ return Math.max(0, Math.min(100, v)); }
+
+/* ============ RENDER ============ */
+
+const el = id => document.getElementById(id);
+
+function showScreen(id){
+  document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
+  el(id).classList.add('active');
+}
+
+function updateStatsUI(){
+  el('turnCount').textContent = state.turn;
+  let label;
+  if(state.act===1) label = "Akt I";
+  else if(state.finaleTurn!==null && (state.finaleTurn-state.turn)<=3) label = "Zbliża się Noc Przyzwania...";
+  else label = "Akt II";
+  el('stageLabel').textContent = label;
+  [['cs',state.cs],['sp',state.sp],['sn',state.sn],['fv',state.fv]].forEach(([k,v])=>{
+    el('fill-'+k).style.width = v+'%';
+    el('val-'+k).textContent = v;
+    const dangerZone = (v<=15 || v>=85);
+    el('stat-'+k).classList.toggle('danger', dangerZone);
+  });
+  drawTentacles();
+}
+
+function updateInventoryUI(){
+  const row = el('inventoryRow');
+  const keys = Object.keys(state.inventory);
+  if(keys.length===0){
+    row.innerHTML = '<span class="inv-empty">— brak przedmiotów —</span>';
+  } else {
+    row.innerHTML = keys.map(k=>{
+      const it = ITEMS[k];
+      const cd = state.relicCooldowns && state.relicCooldowns[k] && state.turn < state.relicCooldowns[k] ? ' (odpoczywa)' : '';
+      return `<div class="inv-item" title="${it.name}: ${it.desc}${cd}">${it.icon}</div>`;
+    }).join('');
+  }
+  updateConsumablesUI();
+  updateExtendedStatusUI();
+}
+
+function updateConsumablesUI(){
+  const row = el('consumableRow');
+  const keys = Object.keys(state.consumables||{}).filter(k=>state.consumables[k]>0);
+  if(!keys.length){
+    row.innerHTML = '<span class="status-empty">— brak jednorazowych artefaktów —</span>';
+    return;
+  }
+  row.innerHTML = keys.map(k=>{
+    const c = CONSUMABLES[k];
+    return `<button class="consumable-item" data-consumable="${k}" title="${c.name}: ${c.desc}">${c.icon}</button>`;
+  }).join('');
+  row.querySelectorAll('.consumable-item').forEach(btn=>btn.addEventListener('click', ()=>useConsumable(btn.dataset.consumable)));
+}
+
+function updateExtendedStatusUI(){
+  const specialistRow = el('specialistRow');
+  const origin = currentOrigin();
+  const item = ITEMS[origin.item];
+  specialistRow.innerHTML = `<div class="status-chip" title="${origin.name}: ${origin.desc} Charakterystyczna relikwia (do znalezienia w grze): ${item.name}">${origin.icon}</div><span class="status-empty">${origin.name}</span>`;
+
+  const siteRow = el('siteRow');
+  const siteKeys = Object.keys(state.sites||{});
+  siteRow.innerHTML = siteKeys.length ? siteKeys.map(k=>{
+    const s = SITES[k];
+    return `<div class="status-chip site" title="${s.name}: ${s.desc}">${s.icon}</div>`;
+  }).join('') : '<span class="status-empty">— kapliczka bez rozbudowy —</span>';
+  document.querySelectorAll('.temple-part[data-site]').forEach(part=>{
+    part.classList.toggle('active', !!state.sites[part.dataset.site]);
+  });
+
+  const ritualRow = el('ritualRow');
+  ritualRow.innerHTML = Object.keys(RITUALS).map(k=>{
+    const r = RITUALS[k];
+    return `<div class="status-chip ritual" title="${r.name}: przygotowanie ${ritualLevel(k)}/${r.max}">${r.icon} ${ritualLevel(k)}/${r.max}</div>`;
+  }).join('');
+}
+
+function drawTentacles(){
+  const svg = el('tentacleSvg');
+  const n = Math.round((state.fv/100) * 6) + 1;
+  let paths = '';
+  const colors = ['#3f8d7e55','#7a5a9c44','#2a201333'];
+  for(let i=0;i<n;i++){
+    const seed = i*47 + state.turn*3;
+    const x = (Math.sin(seed)*0.5+0.5)*340;
+    const startY = i%2===0 ? -10 : 470;
+    const c1x = x + Math.sin(seed*1.3)*70;
+    const c1y = startY + (i%2===0? 60:-60);
+    const c2x = x + Math.sin(seed*2.1)*40;
+    const c2y = startY + (i%2===0? 120:-120);
+    const endY = startY + (i%2===0? 90:-90);
+    paths += `<path d="M${x},${startY} C${c1x},${c1y} ${c2x},${c2y} ${x+20},${endY}" stroke="${colors[i%3]}" stroke-width="${1+state.fv/60}" fill="none" stroke-linecap="round"/>`;
+  }
+  svg.innerHTML = paths;
+}
+
+function requiredItemIds(choice){
+  const ids = [];
+  if(choice.requiresItem) ids.push(choice.requiresItem);
+  if(choice.requiresItems) ids.push(...choice.requiresItems);
+  return ids;
+}
+function missingItems(choice){
+  return requiredItemIds(choice).filter(id=>!state.inventory[id]);
+}
+function sideEnabled(choice){
+  if(!choice) return false;
+  return missingItems(choice).length===0;
+}
+
+function drawNextCard(){
+  if(state.act>=2 && state.finaleTurn!==null && state.turn>=state.finaleTurn){
+    return finaleCard();
+  }
+  const key = checkKeyEvents();
+  if(key) return key;
+  const ql = checkQuestlineEvents();
+  if(ql) return ql;
+  // wątki zaplanowane
+  let i=0;
+  while(i<state.scheduled.length){
+    const entry = state.scheduled[i];
+    if(state.turn < entry.ready){ i++; continue; }
+    state.scheduled.splice(i,1);
+    const fu = FOLLOWUPS[entry.key];
+    if(fu && (!fu.cond || fu.cond(state)) && Math.random()<entry.chance){
+      return fu.card;
+    }
+  }
+  // kot przynoszący losowe przedmioty
+  if(state.flags.catFed && !state.flags.catGone && Math.random()<0.12){
+    const pool = CAT_GIFT_POOL.filter(id=>!state.inventory[id]);
+    if(pool.length){
+      const item = pool[Math.floor(Math.random()*pool.length)];
+      return catGiftCard(item);
+    }
+  }
+  const extra = pickExtraCard();
+  if(extra) return extra;
+
+  // karty fabularne — jednorazowe, wprowadzają historię i podpowiedzi
+  const loreChance = hasSite('biblioteka') ? 0.28 : 0.20;
+  if(state.turn>=2 && lorePool.length>0 && Math.random()<loreChance){
+    const idx = Math.floor(Math.random()*lorePool.length);
+    const c = lorePool[idx];
+    lorePool.splice(idx,1);
+    return c;
+  }
+  // karty specjalne, jednorazowe (w tym questline i przedmiotowe)
+  if(state.turn>=3 && specialsPool.length>0 && Math.random()<0.22){
+    const idx = Math.floor(Math.random()*specialsPool.length);
+    const c = specialsPool[idx];
+    // pomiń, jeśli wymaga przedmiotu, którego nie mamy — próbuj innej karty w tym samym losowaniu
+    if(!c.L.requiresItem && !c.R.requiresItem && !c.L.requiresItems && !c.R.requiresItems){
+      specialsPool.splice(idx,1);
+      return c;
+    }
+    const hasAny = sideEnabled(c.L) || sideEnabled(c.R) || (c.L && !c.L.requiresItem && !c.L.requiresItems) || (c.R && !c.R.requiresItem && !c.R.requiresItems);
+    if(hasAny){
+      specialsPool.splice(idx,1);
+      return c;
+    }
+  }
+  // zwykła karta — z chłodzeniem i blokadą powtórek przedmiotów już posiadanych
+  const cooldownOk = c => !(state.cooldowns[c._id]!==undefined && state.turn < state.cooldowns[c._id]);
+  const itemOk = c => {
+    const gi = cardGrantItemId(c);
+    return !gi || !state.inventory[gi];
+  };
+  let pool = deck.filter(c=>cooldownOk(c) && itemOk(c));
+  if(pool.length===0) pool = deck.filter(itemOk);      // odpuść chłodzenie, ale nie dawaj duplikatu przedmiotu
+  if(pool.length===0) pool = deck.slice();             // ostatnia linia bezpieczeństwa
+  const card = pool[Math.floor(Math.random()*pool.length)];
+  state.cooldowns[card._id] = state.turn + CARD_COOLDOWN_MIN + Math.floor(Math.random()*(CARD_COOLDOWN_MAX-CARD_COOLDOWN_MIN+1));
+  return card;
+}
+
+const EXTRA_CARDS = [
+ {key:'site_krypta', chance:0.16, cond:s=>s.keyDone.fund && !s.sites.krypta, card:{i:'⚰️',n:'Schody Pod Kaplicą',t:'Pod świeżo wzmocnioną podłogą odkrywacie kamienne schody. Schodzą w dół dalej, niż pozwala rozsądek.',L:{t:'Urządź Kryptę',e:{cs:-4,sp:-4},buildSite:'krypta'},R:{t:'Zasyp wejście',e:{sn:3}}}},
+ {key:'site_biblioteka', chance:0.14, cond:s=>s.keyDone.fund && !s.sites.biblioteka && (s.inventory.wyrwanaStrona || s.inventory.notatkiProfesora), card:{i:'📚',n:'Półki z Mokrego Drewna',t:'Księga domaga się miejsca dla innych ksiąg. Ściany kapliczki zaczynają pachnieć pleśnią i atramentem.',L:{t:'Załóż Bibliotekę Pleśni',e:{cs:-3,sn:-2},buildSite:'biblioteka'},R:{t:'Nie mnożyć tekstów',e:{sn:2}}}},
+ {key:'site_pomost', chance:0.14, cond:s=>s.keyDone.fund && !s.sites.pomost && s.fv>=55, card:{i:'🌊',n:'Deski na Wodzie',t:'Nocą fale układają przy brzegu rząd desek. Wyglądają jak początek pomostu, którego nikt nie zbudował.',L:{t:'Dokończ Ukryty Pomost',e:{cs:-5,fv:4},buildSite:'pomost'},R:{t:'Zepchnij deski w jezioro',e:{fv:-4,sn:2}}}},
+ {key:'site_sala', chance:0.12, cond:s=>s.keyDone.krewMorza && !s.sites.sala, card:{i:'🕯️',n:'Pokój, Który Odpowiada',t:'Za ołtarzem pojawiają się drzwi do pomieszczenia, w którym każde słowo wraca szeptem z cudzych ust.',L:{t:'Otwórz Salę Szeptów',e:{fv:8,sn:-5},buildSite:'sala'},R:{t:'Zamurować drzwi',e:{sn:5,fv:-5}}}},
+
+ {key:'origin_ksiegarz', chance:0.18, cond:s=>s.origin==='ksiegarz' && s.turn>=4 && !s.flags.originKsiegarz, card:{i:'📚',n:'Klient bez Twarzy',t:'Do antykwariatu wraca ktoś, kto nigdy nie wychodził z działu ksiąg zakazanych. Prosi o tom, którego jeszcze nie napisałeś.',L:{t:'Sprzedaj mu pusty notes',e:{cs:4,fv:5,sn:-3},ritual:{id:'piesn',amount:1},setFlag:'originKsiegarz'},R:{t:'Zamknij sklep przed zmrokiem',e:{sp:-5,sn:3},setFlag:'originKsiegarz'}}},
+ {key:'origin_rybak', chance:0.18, cond:s=>s.origin==='rybak' && s.turn>=4 && !s.flags.originRybak, card:{i:'🎣',n:'Sieć Pełna Szeptów',t:'Twoja stara sieć sama rozkłada się na brzegu. W każdym węźle tkwi mała mokra modlitwa.',L:{t:'Zaciągnij ją do kaplicy',e:{fv:9,cs:3,sn:-4},ritual:{id:'krag',amount:1},setFlag:'originRybak'},R:{t:'Spal sieć na plaży',e:{sn:4,fv:-5},setFlag:'originRybak'}}},
+ {key:'origin_lekarz', chance:0.18, cond:s=>s.origin==='lekarz' && s.turn>=4 && !s.flags.originLekarz, card:{i:'🩺',n:'Pacjent bez Tętna',t:'Na kozetce siada człowiek, który nie ma pulsu, ale cierpliwie opisuje objawy przyszłego przebudzenia.',L:{t:'Zapisz diagnozę',e:{sn:5,fv:4,sp:3},ritual:{id:'ofiara',amount:1},setFlag:'originLekarz'},R:{t:'Wypisz akt zgonu',e:{sp:-4,sn:-2},setFlag:'originLekarz'}}},
+ {key:'origin_policjant', chance:0.18, cond:s=>s.origin==='policjant' && s.turn>=4 && !s.flags.originPolicjant, card:{i:'👮',n:'Akta z Pustej Szuflady',t:'W komisariacie znajdujesz teczkę z własnym podpisem. W środku są zdjęcia rytuału, którego jeszcze nie odprawiłeś.',L:{t:'Sfałszuj rejestr dowodów',e:{sp:-9,cs:-2},setFlag:'originPolicjant'},R:{t:'Przeczytaj akta do końca',e:{fv:6,sn:-5},ritual:{id:'piesn',amount:1},setFlag:'originPolicjant'}}},
+
+ {key:'origin_latarnik', chance:0.18, cond:s=>s.origin==='latarnik' && s.turn>=4 && !s.flags.originLatarnik, card:{i:'🔦',n:'Ostatni Sygnał Latarni',t:'Z dawnej latarni przychodzi sygnał, którego nikt poza tobą nie umie odczytać. Trzy krótkie błyski. Jeden długi. Potem ciemność.',L:{t:'Odpowiedz światłem',e:{fv:8,sp:-4},ritual:{id:'krag',amount:1},setFlag:'originLatarnik'},R:{t:'Zgaś wszystkie lampy',e:{sp:-8,fv:-3},setFlag:'originLatarnik'}}},
+ {key:'origin_detektyw', chance:0.18, cond:s=>s.origin==='detektyw' && s.turn>=4 && !s.flags.originDetektyw, card:{i:'🕵️',n:'Sprawa, Której Nie Zamknąłeś',t:'W notatniku odnajdujesz nazwisko świadka, którego kiedyś uznałeś za wariata. Teraz jego zeznania brzmią jak instrukcja rytuału.',L:{t:'Odnajdź świadka',e:{sp:-6,sn:-3},ritual:{id:'ofiara',amount:1},setFlag:'originDetektyw'},R:{t:'Wyrwij stronę',e:{sn:5,sp:2},setFlag:'originDetektyw'}}},
+ {key:'origin_badacz', chance:0.18, cond:s=>s.origin==='badacz' && s.turn>=4 && !s.flags.originBadacz, card:{i:'🎓',n:'List z Miskatonic',t:'Katedra pyta, czemu twoja ostatnia praca zawierała przypis do czegoś, co nie istnieje w żadnym języku.',L:{t:'Odeślij poprawioną wersję',e:{sp:5,sn:4},ritual:{id:'piesn',amount:1},setFlag:'originBadacz'},R:{t:'Spal korespondencję',e:{sp:-5,fv:4},setFlag:'originBadacz'}}},
+ {key:'origin_pijak', chance:0.18, cond:s=>s.origin==='pijak' && s.turn>=4 && !s.flags.originPijak, card:{i:'🍺',n:'Długi w Porcie',t:'Karczmarz przypomina ci rachunek dłuższy niż większość modlitw. W zamian za umorzenie długu chce zobaczyć, co trzymasz w piwnicy.',L:{t:'Zapłać perłą plotek',e:{cs:-4,sp:-8,sn:-4},setFlag:'originPijak'},R:{t:'Pokaż mu tylko cień',e:{fv:8,sp:5},setFlag:'originPijak'}}},
+ {key:'origin_oblakany', chance:0.20, cond:s=>s.origin==='oblakany' && s.turn>=3 && !s.flags.originOblakany, card:{i:'🌀',n:'Dzień, Który Już Śniłeś',t:'Wiesz, która karta zaraz spadnie ze stołu. Wiesz też, że jeśli ją podniesiesz, ktoś inny zapomni swoje imię.',L:{t:'Podnieś ją pierwszy',e:{fv:12,sn:-8},ritual:{id:'piesn',amount:1},addTemptation:1,setFlag:'originOblakany'},R:{t:'Pozwól dniu przejść inaczej',e:{sn:7,fv:-5},setFlag:'originOblakany'}}},
+ {key:'origin_ksiadz', chance:0.18, cond:s=>s.origin==='ksiadz' && s.turn>=4 && !s.flags.originKsiadz, card:{i:'⛪',n:'Kazanie bez Boga',t:'W niedzielę ludzie przychodzą jak dawniej. Czekają na słowa, które nie zdradzą, komu naprawdę służysz.',L:{t:'Powiedz im półprawdę',e:{cs:6,sp:-5,fv:-3},setFlag:'originKsiadz'},R:{t:'Milcz przed ołtarzem',e:{sn:6,fv:5,cs:-3},setFlag:'originKsiadz'}}},
+
+ {key:'prep_piesn', chance:0.18, cond:s=>s.keyDone.fund && ritualLevel('piesn')<3, card:{i:'♪',n:'Próba Pieśni',t:'Wyznawcy próbują śpiewać fragment wezwania. Szyby drżą, a jedna ryba w wiadrze zaczyna harmonizować.',L:{t:'Ćwicz do świtu',e:{sn:-4,fv:4},ritual:{id:'piesn',amount:1}},R:{t:'Przerwij fałszywe nuty',e:{sn:2}}}},
+ {key:'prep_krag', chance:0.18, cond:s=>s.keyDone.fund && ritualLevel('krag')<3, card:{i:'◎',n:'Kreda i Sól',t:'Krąg rytualny nie chce być okręgiem. Linia zawsze ucieka lekko w stronę jeziora.',L:{t:'Poprawiaj, aż zaakceptuje',e:{cs:-3,sp:2},ritual:{id:'krag',amount: hasSite('pomost')?2:1}},R:{t:'Zostaw na później',e:{}}}},
+ {key:'prep_ofiara', chance:0.16, cond:s=>s.keyDone.krewMorza && ritualLevel('ofiara')<3, card:{i:'✦',n:'Miejsce dla Ofiary',t:'Na brzegu jeziora zostaje suchy ślad w kształcie człowieka. Nikt nie chce na nim stanąć.',L:{t:'Przygotuj miejsce',e:{fv:6,sn:-5},ritual:{id:'ofiara',amount:1}},R:{t:'Zadepcz ślad',e:{sn:3,fv:-3}}}},
+
+ {key:'relic_notatnikDetektywa', chance:0.15, cond:s=>s.inventory.notatnikDetektywa && relicReady('notatnikDetektywa') && s.sp>=58, card:{i:'📓',n:'Nocne Porządki w Notatniku',t:'Notatnik Detektywa zawiera rubrykę zatytułowaną: „ludzie, których trzeba skompromitować zanim przemówią”.',L:{t:'Użyj notatnika',e:{sp:-12,cs:-2},useRelic:'notatnikDetektywa'},R:{t:'Nie ruszaj cudzych akt',e:{sn:2}}}},
+ {key:'relic_soczewkiLatarnika', chance:0.13, cond:s=>s.inventory.soczewkiLatarnika && relicReady('soczewkiLatarnika'), card:{i:'🔭',n:'Spojrzenie przez Soczewki',t:'Przez szkła latarnika widać nie wodę, lecz schody schodzące pod powierzchnię.',L:{t:'Patrz, dopóki mrugasz',e:{fv:10,sn:-4,sp: isOrigin('latarnik')?0:3},useRelic:'soczewkiLatarnika'},R:{t:'Odłóż szkła',e:{sn:2}}}},
+ {key:'relic_czarnaPerla', chance:0.13, cond:s=>s.inventory.czarnaPerla && relicReady('czarnaPerla') && s.sn<=55, card:{i:'⚫',n:'Czarna Perła w Ustach',t:'Perła nie odbija światła. Gdy wkładasz ją pod język, odbija za to wspomnienia.',L:{t:'Pozwól jej zabrać wspomnienie',e:{sn:10,fv:5},useRelic:'czarnaPerla'},R:{t:'Schowaj ją głębiej',e:{}}}},
+ {key:'relic_dzwonZWraku', chance:0.13, cond:s=>s.inventory.dzwonZWraku && relicReady('dzwonZWraku') && ritualLevel('krag')<3, card:{i:'🔔',n:'Trzecie Uderzenie Dzwonu',t:'Dzwon z Wraku odzywa się sam. Po trzecim uderzeniu świece ustawiają się w okrąg.',L:{t:'Pozwól mu dzwonić',e:{fv:5,sp:3},ritual:{id:'krag',amount:1},useRelic:'dzwonZWraku'},R:{t:'Owiń go szmatami',e:{sn:2}}}},
+
+ {key:'tempt_fv', chance:0.18, cond:s=>s.fv>=68 || s.sn<=34 || s.sites.sala, card:{i:'👁️',n:'Pokusa Przedwiecznych',t:'Szept obiecuje skrót. Nie trzeba pełnego rytuału, nie trzeba zgody kultu. Wystarczy pozwolić, by coś spojrzało twoimi oczami.',L:{t:'Przyjmij skrót',e:{fv: isOrigin('oblakany')?18:14,sn: isOrigin('oblakany')?-12:-8},addTemptation:1,schedule:{key:'temptationPrice',inTurns:[5,9],chance:1}},R:{t:'Trzymaj się planu',e:{sn:4,fv:-4}}}},
+];
+
+function relicReady(id){ return !state.relicCooldowns[id] || state.turn>=state.relicCooldowns[id]; }
+function extraReady(key){ return !state.extraCooldowns[key] || state.turn>=state.extraCooldowns[key]; }
+function pickExtraCard(){
+  const pool = EXTRA_CARDS.filter(x=>extraReady(x.key) && x.cond(state) && Math.random()<x.chance);
+  if(!pool.length) return null;
+  const x = pool[Math.floor(Math.random()*pool.length)];
+  state.extraCooldowns[x.key] = state.turn + 6 + Math.floor(Math.random()*7);
+  return x.card;
+}
+
+function pickCard(){
+  if(state.peekCard){
+    const c = state.peekCard;
+    state.peekCard = null;
+    return c;
+  }
+  return drawNextCard();
+}
+
+function finaleCard(){
+  return {
+    i:"🌑", n:"Noc Przyzwania", isFinale:true,
+    t:"Krąg jest zamknięty. Świece dogasają jedna po drugiej. Wszystko, co robiłeś do teraz, prowadziło do tej jednej nocy nad jeziorem.",
+    L:{t:"Rozpocznij Rytuał"}, R:null
+  };
+}
+
+function resolveFinale(){
+  const s = state;
+  let id;
+  const prepared = ritualCompleteEnough();
+  const strongPrep = ritualTotal()>=8;
+  if(s.temptationDebt>=2 && s.sn<45) id='falseProphet';
+  else if(s.sp>=70) id='raided';
+  else if(s.sn<25) id='falseProphet';
+  else if(s.cs<30) id='tooFew';
+  else if(s.fv<35) id='noResponse';
+  else if(prepared && s.fv>=65 && s.sp<55 && s.sn>=35 && s.cs>=50) id='trueWin';
+  else if(strongPrep && s.fv>=60 && s.sp<60 && s.sn>=30 && s.cs>=45) id='trueWin';
+  else id='incomplete';
+  showEnding(id);
+}
+
+function cloneStateForHistory(){
+  return JSON.parse(JSON.stringify(state));
+}
+function saveHistory(card){
+  if(suppressHistory || !state || !card) return;
+  const last = stateHistory[stateHistory.length-1];
+  const id = cardMemoryId(card);
+  if(last && last.turn===state.turn && last.cardId===id) return;
+  stateHistory.push({turn:state.turn, cardId:id, state:cloneStateForHistory(), card:JSON.parse(JSON.stringify(card))});
+  if(stateHistory.length>16) stateHistory.shift();
+}
+
+function renderCard(card){
+  currentCard = card;
+  saveHistory(card);
+  el('cardIcon').textContent = card.i;
+  el('cardName').textContent = card.n;
+  el('cardText').textContent = card.t;
+  el('cardFooter').textContent = card.isFinale ? "" : (card.isKeyEvent ? "— wydarzenie kluczowe —" : "");
+
+  setupSide('L', card.L);
+  setupSide('R', card.R);
+
+  const cardEl = el('card');
+  cardEl.style.transition = 'none';
+  cardEl.style.transform = 'translate(0,0) rotate(0deg)';
+  cardEl.style.opacity = '0';
+  requestAnimationFrame(()=>{
+    cardEl.style.transition = 'transform .35s ease, opacity .35s ease';
+    cardEl.style.opacity = '1';
+  });
+}
+
+function cardMemoryId(card){
+  return card._id || card.memoryId || (card.n+'|'+card.t);
+}
+function choiceMemoryKey(card, side){
+  return cardMemoryId(card)+'|'+side;
+}
+function statEffectSummary(before, after){
+  const labels = {cs:'Kult', sp:'Podejrzenia', sn:'Poczytalność', fv:'Łaska'};
+  const parts = ['cs','sp','sn','fv'].map(k=>{
+    const diff = after[k]-before[k];
+    if(!diff) return null;
+    return labels[k]+' '+(diff>0?'+':'')+diff;
+  }).filter(Boolean);
+  return parts.length ? parts.join(' · ') : 'Brak zmiany statystyk';
+}
+function rememberChoiceEffect(card, side, before){
+  if(!state.choiceMemory) state.choiceMemory = {};
+  const after = {cs:state.cs, sp:state.sp, sn:state.sn, fv:state.fv};
+  state.choiceMemory[choiceMemoryKey(card, side)] = statEffectSummary(before, after);
+}
+function rememberedChoiceEffect(card, side){
+  return state.choiceMemory && state.choiceMemory[choiceMemoryKey(card, side)];
+}
+function rawChoiceEffect(choice){
+  if(!choice) return {};
+  if(choice.chance!==undefined) return choice.successE || choice.e || {};
+  return choice.e || {};
+}
+function previewChoiceEffect(choice){
+  const before = {cs:state.cs, sp:state.sp, sn:state.sn, fv:state.fv};
+  const effect = modifyEffects(rawChoiceEffect(choice), []);
+  const after = {
+    cs:clamp(before.cs + (effect.cs||0)),
+    sp:clamp(before.sp + (effect.sp||0)),
+    sn:clamp(before.sn + (effect.sn||0)),
+    fv:clamp(before.fv + (effect.fv||0)),
+  };
+  return statEffectSummary(before, after);
+}
+
+function setupSide(side, choice){
+  const btn = el(side==='L'?'btnLeft':'btnRight');
+  const txt = el(side==='L'?'btnLeftText':'btnRightText');
+  const hint = el(side==='L'?'hintLeft':'hintRight');
+  btn.classList.remove('hidden-choice','locked');
+  if(!choice){
+    btn.classList.add('hidden-choice');
+    txt.textContent = ''; hint.textContent='';
+    return;
+  }
+  const missing = missingItems(choice);
+  if(missing.length){
+    btn.classList.add('locked');
+    const label = "🔒 Wymaga: " + missing.map(id=>ITEMS[id].name).join(' i ');
+    txt.textContent = label; hint.textContent = label;
+  } else {
+    const known = rememberedChoiceEffect(currentCard, side);
+    const preview = !known && state.revealUntil && state.turn < state.revealUntil ? previewChoiceEffect(choice) : null;
+    const label = known || preview;
+    txt.innerHTML = choice.t + (label ? '<span class="effect-known">'+(known?label:'Przewidywane: '+label)+'</span>' : '');
+    hint.textContent = choice.t + (label ? ' — '+label : '');
+  }
+}
+
+function modifyEffects(e, lines){
+  e = Object.assign({}, e || {});
+  if(e.sp>0 && (isOrigin('detektyw') || isOrigin('policjant'))) e.sp = Math.max(0, e.sp-2);
+  if(e.sp>0 && hasSite('krypta')) e.sp = Math.max(0, e.sp-3);
+  if(e.sp>0 && isOrigin('ksiadz')) e.sp = Math.max(0, e.sp-1);
+  if(e.sn<0 && isOrigin('lekarz')) e.sn = Math.min(0, e.sn+2);
+  if(e.fv>0 && isOrigin('rybak')) e.fv += 1;
+  if(e.sn<0 && hasSite('biblioteka')) e.sn = Math.min(0, e.sn+2);
+  if(e.fv>0 && hasSite('sala')) e.fv += 2;
+  if(e.sn<0 && state.inventory.czarnaPerla && !state.flags.perlaOchronila && e.sn<=-6){
+    e.sn = Math.ceil(e.sn/2);
+    e.fv = (e.fv||0)+2;
+    state.flags.perlaOchronila = true;
+    lines.push('Czarna Perła połyka część wspomnienia.');
+  }
+  if(e.sp<0 && isOrigin('pijak') && Math.random()<0.25){
+    e.sp -= 2; e.sn = (e.sn||0)-1;
+    lines.push('Pijak opowiada prawdę tak bełkotliwie, że nikt jej nie wierzy.');
+  }
+  return e;
+}
+
+function applyEffects(e){
+  if(!e) return;
+  if(e.cs!==undefined) state.cs = clamp(state.cs + e.cs);
+  if(e.sp!==undefined) state.sp = clamp(state.sp + e.sp);
+  if(e.sn!==undefined) state.sn = clamp(state.sn + e.sn);
+  if(e.fv!==undefined) state.fv = clamp(state.fv + e.fv);
+}
+
+function checkStatEndings(){
+  if(state.cs<=0) return 'cs0';
+  if(state.cs>=100){
+    const shub = state.ql && state.ql.shub;
+    if(shub && shub.stage===3 && !shub.ended) return null; // questline Shub-Niggurath czeka na kartę finałową
+    return 'cs100';
+  }
+  if(state.sp>=100) return 'sp100';
+  if(state.sp<=0) return 'sp0';
+  if(state.sn<=0) return 'sn0';
+  if(state.sn>=100) return 'sn100';
+  if(state.fv<=0) return 'fv0';
+  if(state.fv>=100) return 'fv100';
+  return null;
+}
+
+function resolveChoice(choice){
+  const lines = [];
+  let effect = choice.e || {};
+
+  if(choice.chance !== undefined){
+    const ok = Math.random() < choice.chance;
+    if(ok){
+      effect = choice.successE || {};
+      if(choice.successT) lines.push(choice.successT);
+      if(choice.successGrant){
+        state.inventory[choice.successGrant] = true;
+        lines.push('Otrzymujesz: '+ITEMS[choice.successGrant].icon+' '+ITEMS[choice.successGrant].name);
+      }
+      if(choice.successFlag) state.flags[choice.successFlag] = true;
+    } else {
+      effect = choice.failE || {};
+      if(choice.failT) lines.push(choice.failT);
+      if(choice.failFlag) state.flags[choice.failFlag] = true;
+    }
+  }
+
+  effect = modifyEffects(effect, lines);
+  applyEffects(effect);
+
+  if(choice.grant){
+    const chRaw = choice.grant.chance;
+    const ch = typeof chRaw==='function' ? chRaw(state) : (chRaw===undefined?1:chRaw);
+    if(Math.random()<ch){
+      state.inventory[choice.grant.item] = true;
+      lines.push('Otrzymujesz: '+ITEMS[choice.grant.item].icon+' '+ITEMS[choice.grant.item].name);
+    }
+  }
+  if(choice.grantConsumable){
+    const gc = choice.grantConsumable;
+    const gchRaw = gc.chance;
+    const gch = typeof gchRaw==='function' ? gchRaw(state) : (gchRaw===undefined?1:gchRaw);
+    if(Math.random()<gch){
+      if(!state.consumables) state.consumables = {};
+      state.consumables[gc.id] = (state.consumables[gc.id]||0) + 1;
+      lines.push('Zdobywasz jednorazowy artefakt: '+CONSUMABLES[gc.id].icon+' '+CONSUMABLES[gc.id].name);
+    }
+  }
+  if(choice.requiresItem && choice.consumeItem){
+    delete state.inventory[choice.requiresItem];
+  }
+  if(choice.requiresItems && choice.consumeItems){
+    choice.requiresItems.forEach(id=>delete state.inventory[id]);
+  }
+  if(choice.buildSite && !state.sites[choice.buildSite]){
+    state.sites[choice.buildSite] = true;
+    const site = SITES[choice.buildSite];
+    lines.push('Nowe miejsce: '+site.icon+' '+site.name);
+  }
+  if(choice.ritual){
+    const r = choice.ritual;
+    let bonus = (isOrigin('badacz') || isOrigin('lekarz')) && r.amount>0 ? 1 : 0;
+    if(r.id==='krag' && hasSite('pomost') && r.amount>0) bonus += 1;
+    if(r.id==='piesn' && hasSite('sala') && r.amount>0) bonus += 1;
+    if(r.id==='ofiara' && hasSite('biblioteka') && r.amount>0) bonus += 1;
+    state.ritualPrep[r.id] = Math.min(RITUALS[r.id].max, ritualLevel(r.id) + r.amount + bonus);
+    lines.push('Przygotowanie rytuału: '+RITUALS[r.id].name+' '+ritualLevel(r.id)+'/'+RITUALS[r.id].max);
+  }
+  if(choice.useRelic){
+    const seaRelics = ['soczewkiLatarnika','czarnaPerla','dzwonZWraku'];
+    let cooldown = isOrigin('latarnik') ? 5 : 7;
+    if(hasSite('pomost') && seaRelics.includes(choice.useRelic)) cooldown = Math.max(2, cooldown-2);
+    state.relicCooldowns[choice.useRelic] = state.turn + cooldown;
+    lines.push('Relikwia odpocznie przez kilka nocy.');
+  }
+  if(choice.addTemptation){
+    state.temptationDebt = Math.max(0, state.temptationDebt + choice.addTemptation);
+  }
+  if(choice.setFlag) state.flags[choice.setFlag] = true;
+  if(choice.clearFlag) delete state.flags[choice.clearFlag];
+  if(choice.completeKey) state.keyDone[choice.completeKey] = true;
+  if(choice.postponeKey) state.keyPostpone[choice.postponeKey] = state.turn + (choice.postpone||3);
+  if(choice.qlAdvance) advanceQuestline(choice.qlAdvance);
+  if(choice.qlEnd) endQuestline(choice.qlEnd);
+  if(choice.triggerAltFinale) state.pendingAltFinale = choice.triggerAltFinale;
+  if(choice.clearInventory){
+    const had = Object.keys(state.inventory).length;
+    state.inventory = {};
+    if(had) lines.push('Wyrzucasz wszystkie zebrane relikwie.');
+  }
+  if(choice.removeRandomItem){
+    const keys = Object.keys(state.inventory);
+    if(keys.length){
+      const k = keys[Math.floor(Math.random()*keys.length)];
+      delete state.inventory[k];
+      lines.push('Oddajesz: '+ITEMS[k].icon+' '+ITEMS[k].name);
+    }
+  }
+  if(choice.removeRandomDeckCard){
+    if(deck.length>4){
+      const idx = Math.floor(Math.random()*deck.length);
+      const removed = deck.splice(idx,1)[0];
+      lines.push('Zapominasz na zawsze wydarzenie: '+removed.n+'.');
+    }
+  }
+  if(choice.schedule){
+    const sc = choice.schedule;
+    const lo = sc.inTurns[0], hi = sc.inTurns[1];
+    const ready = state.turn + lo + Math.floor(Math.random()*(hi-lo+1));
+    state.scheduled.push({key:sc.key, ready, chance: sc.chance===undefined?1:sc.chance});
+  }
+  return lines;
+}
+
+function chooseSide(side){
+  const card = currentCard;
+  const choice = side==='L' ? card.L : card.R;
+  if(!choice) return;
+  if(!sideEnabled(choice)){
+    const missing = missingItems(choice);
+    showToast('🔒 Potrzebujesz: '+missing.map(id=>ITEMS[id].name).join(' i '), 1300);
+    return;
+  }
+
+  playFlipSound();
+  animateCardOut(side, ()=>{
+    if(choice.instant){ showEnding(choice.instant); return; }
+    const beforeStats = {cs:state.cs, sp:state.sp, sn:state.sn, fv:state.fv};
+    const lines = resolveChoice(choice);
+    rememberChoiceEffect(card, side, beforeStats);
+    if(lines.length){
+      showToast(lines.join('<br>'), 1500);
+      setTimeout(()=>finalizeTurn(card), 1550);
+    } else {
+      finalizeTurn(card);
+    }
+  });
+}
+
+function finalizeTurn(card){
+  state.turn++;
+  updateQuestlineGates();
+
+  if(card.isFinaleAct1){
+    state.act = 2;
+    state.finaleTurn = state.turn + 6 + Math.floor(Math.random()*5);
+  }
+
+  if(state.pendingAltFinale){
+    const key = state.pendingAltFinale;
+    state.pendingAltFinale = null;
+    state.altPath = key;
+    state.act = 2;
+    updateStatsUI();
+    updateInventoryUI();
+    renderCard(ALT_FINALES[key].card);
+    return;
+  }
+
+  if(card.isAltFinale){
+    showEnding(ALT_FINALES[card.isAltFinale].resolve(state));
+    return;
+  }
+
+  if(card.isFinale){
+    resolveFinale();
+    return;
+  }
+
+  const endId = checkStatEndings();
+  updateStatsUI();
+  updateInventoryUI();
+  if(endId){
+    setTimeout(()=>showEnding(endId), 250);
+    return;
+  }
+  const next = pickCard();
+  renderCard(next);
+}
+
+function consumeItemUse(id){
+  if(!state.consumables || !state.consumables[id]) return false;
+  state.consumables[id]--;
+  if(state.consumables[id]<=0) delete state.consumables[id];
+  return true;
+}
+function useConsumable(id){
+  if(id==='dziwnaMaska'){
+    if(!consumeItemUse(id)) return;
+    state.altPath = 'hastur';
+    state.act = 2;
+    showToast('Dziwna Maska nie schodzi. Akt I się kończy.', 1600);
+    renderCard(ALT_FINALES.hastur.card);
+    updateStatsUI();
+    updateInventoryUI();
+    return;
+  }
+  if(id==='klepsydraCofniecia'){
+    if(!state.consumables || !state.consumables[id]) return;
+    if(stateHistory.length<2){ showToast('Klepsydra pęka, ale nie ma dokąd wrócić.', 1500); return; }
+    rewindTime();
+    if(!state.consumables) state.consumables = {};
+    delete state.consumables.klepsydraCofniecia;
+    updateStatsUI();
+    updateInventoryUI();
+    return;
+  }
+  if(!consumeItemUse(id)) return;
+  if(id==='okularyPrawdy'){
+    state.revealUntil = state.turn + 7;
+    showToast('Okulary Prawdy pokażą skutki wyborów przez 7 nocy.', 1600);
+    renderCard(currentCard);
+  } else if(id==='kotwicaRownowagi'){
+    balanceExtremeStat();
+  } else if(id==='katalogRelikwii'){
+    chooseStoryItem();
+  } else if(id==='okoNastepnejNocy'){
+    peekNextEvent();
+  }
+  updateStatsUI();
+  updateInventoryUI();
+}
+function rewindTime(){
+  if(stateHistory.length<2){ showToast('Klepsydra pęka, ale nie ma dokąd wrócić.', 1500); return; }
+  const target = stateHistory[Math.max(0, stateHistory.length-2)];
+  state = JSON.parse(JSON.stringify(target.state));
+  currentCard = JSON.parse(JSON.stringify(target.card));
+  suppressHistory = true;
+  showScreen('screen-game');
+  updateStatsUI();
+  updateInventoryUI();
+  renderCard(currentCard);
+  suppressHistory = false;
+  showToast('Czas cofa się o dwie noce.', 1500);
+}
+function balanceExtremeStat(){
+  const stats = ['cs','sp','sn','fv'];
+  let chosen = stats[0], best = Math.abs(state[chosen]-50);
+  stats.forEach(k=>{ const d=Math.abs(state[k]-50); if(d>best){ best=d; chosen=k; } });
+  state[chosen] = 50;
+  showToast('Kotwica Równowagi ustawia skrajną statystykę na 50.', 1500);
+}
+function chooseStoryItem(){
+  const available = STORY_ITEM_POOL.filter(id=>!state.inventory[id]);
+  if(!available.length){ showToast('Katalog nie znajduje nic nowego.', 1400); return; }
+  const labels = available.map((id,i)=>(i+1)+'. '+ITEMS[id].name).join('\n');
+  const answer = prompt('Wybierz relikwię fabularną:\n'+labels, '1');
+  const idx = Math.max(0, Math.min(available.length-1, parseInt(answer,10)-1 || 0));
+  const item = available[idx];
+  if(item){ state.inventory[item]=true; showToast('Katalog odnajduje: '+ITEMS[item].icon+' '+ITEMS[item].name, 1600); }
+}
+function peekNextEvent(){
+  if(!state.peekCard) state.peekCard = drawNextCard();
+  showToast('Następne wydarzenie: '+state.peekCard.i+' '+state.peekCard.n, 2200);
+}
+
+function animateCardOut(side, cb){
+  const cardEl = el('card');
+  cardEl.style.transition = 'transform .32s ease, opacity .32s ease';
+  cardEl.style.transform = `translate(${side==='L'?-500:500}px, 40px) rotate(${side==='L'?-35:35}deg)`;
+  cardEl.style.opacity = '0';
+  el('hintLeft').style.opacity = 0;
+  el('hintRight').style.opacity = 0;
+  setTimeout(cb, 260);
+}
+
+let toastTimer=null;
+function showToast(html, ms){
+  const t = el('toast');
+  t.innerHTML = html;
+  t.classList.add('show');
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(()=>t.classList.remove('show'), ms);
+}
+
+function showEnding(id){
+  stopAmbient();
+  const end = ENDINGS[id];
+  el('endTitle').textContent = end.title;
+  el('endTitle').className = 'end-title' + (end.good ? ' good' : '');
+  el('endText').textContent = end.text;
+  el('endStats').innerHTML =
+    `Przetrwałeś ${state.turn} noc(y) — Kult: ${state.cs} · Podejrzenia: ${state.sp} · Poczytalność: ${state.sn} · Łaska: ${state.fv}` +
+    (state.consumables && state.consumables.klepsydraCofniecia ? '<br><button class="btn-main" id="btnEndingRewind">Użyj Pękniętej Klepsydry</button>' : '');
+  showScreen('screen-end');
+  const rewindBtn = el('btnEndingRewind');
+  if(rewindBtn) rewindBtn.addEventListener('click', ()=>useConsumable('klepsydraCofniecia'));
+}
+
+/* ============ DRAG ============ */
+
+let dragging=false, startX=0, curX=0;
+
+function initDrag(){
+  const cardEl = el('card');
+  cardEl.addEventListener('pointerdown', e=>{
+    dragging = true; startX = e.clientX; curX=0;
+    cardEl.style.transition='none';
+    cardEl.setPointerCapture(e.pointerId);
+  });
+  cardEl.addEventListener('pointermove', e=>{
+    if(!dragging) return;
+    curX = e.clientX - startX;
+    const rot = curX/14;
+    cardEl.style.transform = `translate(${curX}px, ${Math.abs(curX)*0.05}px) rotate(${rot}deg)`;
+    const leftOpacity = (curX < -20 && sideEnabled(currentCard.L)) ? Math.min(1,(-curX)/120) : 0;
+    const rightOpacity = (curX > 20 && sideEnabled(currentCard.R)) ? Math.min(1,curX/120) : 0;
+    el('hintLeft').style.opacity = leftOpacity;
+    el('hintRight').style.opacity = rightOpacity;
+  });
+  const endDrag = e=>{
+    if(!dragging) return;
+    dragging=false;
+    const cardEl2 = el('card');
+    cardEl2.style.transition='transform .25s ease';
+    if(curX < -100 && sideEnabled(currentCard.L)){
+      chooseSide('L');
+    } else if(curX > 100 && sideEnabled(currentCard.R)){
+      chooseSide('R');
+    } else {
+      cardEl2.style.transform='translate(0,0) rotate(0deg)';
+      el('hintLeft').style.opacity=0;
+      el('hintRight').style.opacity=0;
+    }
+    curX=0;
+  };
+  cardEl.addEventListener('pointerup', endDrag);
+  cardEl.addEventListener('pointercancel', endDrag);
+}
+
+/* ============ AUDIO ============ */
+
+let audioCtx = null, masterGain = null;
+let ambientRunning = false, ambientNodes = [], ambientGainNode = null, ambientTimer = null;
+let muted = false;
+
+function initAudio(){
+  if(audioCtx) return;
+  try{
+    audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+    masterGain = audioCtx.createGain();
+    masterGain.gain.value = 0.55;
+    masterGain.connect(audioCtx.destination);
+  }catch(e){ audioCtx = null; }
+}
+function resumeAudio(){
+  if(audioCtx && audioCtx.state === 'suspended') audioCtx.resume();
+}
+
+/* dźwięk przewracanej kartki — szum filtrowany z krótką obwiednią */
+function playFlipSound(){
+  if(!audioCtx || muted) return;
+  const t0 = audioCtx.currentTime;
+  const dur = 0.16;
+  const bufferSize = Math.floor(audioCtx.sampleRate * dur);
+  const buffer = audioCtx.createBuffer(1, bufferSize, audioCtx.sampleRate);
+  const data = buffer.getChannelData(0);
+  for(let i=0;i<bufferSize;i++){
+    data[i] = (Math.random()*2-1) * Math.pow(1 - i/bufferSize, 1.6);
+  }
+  const noise = audioCtx.createBufferSource();
+  noise.buffer = buffer;
+  const hp = audioCtx.createBiquadFilter();
+  hp.type = 'highpass'; hp.frequency.value = 1400;
+  const bp = audioCtx.createBiquadFilter();
+  bp.type = 'bandpass'; bp.frequency.value = 3200; bp.Q.value = 0.6;
+  const g = audioCtx.createGain();
+  g.gain.setValueAtTime(0.6, t0);
+  g.gain.exponentialRampToValueAtTime(0.001, t0+dur);
+  noise.connect(hp); hp.connect(bp); bp.connect(g); g.connect(masterGain);
+  noise.start(t0); noise.stop(t0+dur+0.02);
+}
+
+/* odległy, niski 'puls' w ciemności */
+function playThump(){
+  if(!audioCtx || muted) return;
+  const t0 = audioCtx.currentTime;
+  const osc = audioCtx.createOscillator();
+  osc.type = 'sine';
+  osc.frequency.setValueAtTime(66, t0);
+  osc.frequency.exponentialRampToValueAtTime(34, t0+1.4);
+  const g = audioCtx.createGain();
+  g.gain.setValueAtTime(0.0001, t0);
+  g.gain.exponentialRampToValueAtTime(0.22, t0+0.2);
+  g.gain.exponentialRampToValueAtTime(0.0001, t0+1.8);
+  osc.connect(g); g.connect(masterGain);
+  osc.start(t0); osc.stop(t0+1.9);
+}
+
+/* mroczna, ambientowa muzyka tła — kilka detunowanych dronów + wolno 'oddychający' filtr */
+function startAmbient(){
+  if(!audioCtx || ambientRunning) return;
+  ambientRunning = true;
+  const now = audioCtx.currentTime;
+
+  ambientGainNode = audioCtx.createGain();
+  ambientGainNode.gain.setValueAtTime(0, now);
+  ambientGainNode.gain.linearRampToValueAtTime(0.32, now+4);
+
+  const filter = audioCtx.createBiquadFilter();
+  filter.type = 'lowpass';
+  filter.frequency.value = 420;
+
+  const freqs = [55, 82.4, 110.6];
+  ambientNodes = freqs.map((f,idx)=>{
+    const osc = audioCtx.createOscillator();
+    osc.type = idx===1 ? 'triangle' : 'sine';
+    osc.frequency.value = f + (Math.random()*0.5-0.25);
+    const og = audioCtx.createGain();
+    og.gain.value = idx===0 ? 0.5 : 0.22;
+    osc.connect(og); og.connect(filter);
+    osc.start(now);
+    return osc;
+  });
+
+  filter.connect(ambientGainNode);
+  ambientGainNode.connect(masterGain);
+
+  const lfo = audioCtx.createOscillator();
+  lfo.frequency.value = 0.055;
+  const lfoGain = audioCtx.createGain();
+  lfoGain.gain.value = 160;
+  lfo.connect(lfoGain); lfoGain.connect(filter.frequency);
+  lfo.start(now);
+  ambientNodes.push(lfo);
+
+  (function scheduleThump(){
+    if(!ambientRunning) return;
+    const delay = 9000 + Math.random()*15000;
+    ambientTimer = setTimeout(()=>{
+      if(!ambientRunning) return;
+      playThump();
+      scheduleThump();
+    }, delay);
+  })();
+}
+
+function stopAmbient(){
+  if(!ambientRunning) return;
+  ambientRunning = false;
+  clearTimeout(ambientTimer);
+  if(audioCtx && ambientGainNode){
+    const now = audioCtx.currentTime;
+    ambientGainNode.gain.cancelScheduledValues(now);
+    ambientGainNode.gain.setValueAtTime(ambientGainNode.gain.value, now);
+    ambientGainNode.gain.linearRampToValueAtTime(0, now+1.1);
+  }
+  const nodes = ambientNodes;
+  setTimeout(()=>{ nodes.forEach(o=>{ try{o.stop();}catch(e){} }); }, 1200);
+  ambientNodes = [];
+}
+
+function toggleMute(){
+  muted = !muted;
+  if(masterGain) masterGain.gain.value = muted ? 0 : 0.55;
+  const btn = el('muteBtn');
+  if(btn) btn.textContent = muted ? '🔇' : '🔊';
+}
+
+/* ============ INIT ============ */
+
+function renderOriginPicker(){
+  const grid = el('originGrid');
+  if(!grid) return;
+  el('btnStart').textContent = 'Rozpocznij jako '+ORIGINS[selectedOrigin].name;
+  grid.innerHTML = Object.keys(ORIGINS).map(id=>{
+    const o = ORIGINS[id];
+    const item = ITEMS[o.item];
+    return `<button class="origin-card ${id===selectedOrigin?'selected':''}" data-origin="${id}" title="${o.desc}">
+      <div class="origin-head"><span class="origin-icon">${o.icon}</span><span>${o.name}</span></div>
+      <div class="origin-stats">K ${o.stats.cs} · P ${o.stats.sp} · R ${o.stats.sn} · Ł ${o.stats.fv}</div>
+      <div class="origin-desc">${o.desc}</div>
+      <div class="origin-item">Szukaj: ${item.icon} ${item.name}</div>
+    </button>`;
+  }).join('');
+  grid.querySelectorAll('.origin-card').forEach(btn=>{
+    btn.addEventListener('click', ()=>{
+      selectedOrigin = btn.dataset.origin;
+      renderOriginPicker();
+    });
+  });
+}
+
+function showOriginStory(){
+  storyStep = 'origin';
+  const origin = currentOrigin();
+  el('storyTitle').textContent = origin.icon+' '+origin.name;
+  el('storyText').textContent = origin.story || origin.desc;
+  el('btnStoryContinue').textContent = 'Dalej';
+  el('storyModal').classList.add('show');
+}
+function showBookDecisionStory(){
+  storyStep = 'book';
+  const origin = currentOrigin();
+  el('storyTitle').textContent = 'Księga otwiera się sama';
+  el('storyText').textContent = 'Przez kolejne noce analizujesz księgę. Nie jest tylko zbiorem rytuałów. Jest mapą ran świata, spisem ludzkich słabości i obietnicą, że wszystko da się przesunąć odrobinę bliżej właściwego kształtu.\n\nWidzisz w niej coś własnego: szansę naprawy świata, poprawy swojego losu albo po prostu najlepszą zabawę, jaka kiedykolwiek przydarzyła się temu miasteczku.\n\nKsięga nie rozkazuje. Ona sugeruje.\n\nA ty postanawiasz podążać za jej wskazaniami.';
+  el('btnStoryContinue').textContent = 'Rozpocznij rytuał';
+}
+function beginAfterStory(){
+  if(storyStep==='origin'){
+    showBookDecisionStory();
+    return;
+  }
+  el('storyModal').classList.remove('show');
+  showScreen('screen-game');
+  updateStatsUI();
+  updateInventoryUI();
+  renderCard(pickCard());
+}
+function startGame(){
+  initAudio();
+  resumeAudio();
+  resetState();
+  startAmbient();
+  showOriginStory();
+}
+
+renderOriginPicker();
+el('btnStart').addEventListener('click', startGame);
+el('btnStoryContinue').addEventListener('click', beginAfterStory);
+el('btnRestart').addEventListener('click', startGame);
+el('btnLeft').addEventListener('click', ()=>chooseSide('L'));
+el('btnRight').addEventListener('click', ()=>chooseSide('R'));
+el('muteBtn').addEventListener('click', toggleMute);
+initDrag();
+
+})();
+</script>
+
+
+</body></html>
